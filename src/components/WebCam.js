@@ -3,7 +3,7 @@ import Canvas from "./Canvas";
 import {useEffect, useState} from "react";
 
 export default function WebCam() {
-    const [positions, setPoisitions] = useState({})
+    const [positions, setPositions] = useState({})
 
     async function onClickHandler(getScreenshot) {
         const imageSrc = getScreenshot({width: 1920, height: 1080});
@@ -14,7 +14,7 @@ export default function WebCam() {
         };
         const response = await fetch(`http://localhost:3001/image`, requestOptions)
         const ans = JSON.parse(await response.json())
-        setPoisitions(ans)
+        setPositions(ans)
     }
 
     return (
