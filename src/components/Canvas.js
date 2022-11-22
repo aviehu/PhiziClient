@@ -1,16 +1,14 @@
 import {useRef, useEffect} from "react";
-import {screenshotWidth, screenshotHeight, videoWidth, videoHeight} from "../util/envVars";
+import {videoWidth, videoHeight} from "../util/envVars";
+import colorMap from "../util/colorMap";
 
 export default function Canvas({positions, clearDrawing, setClearDrawing}) {
     const canvasRef = useRef(null)
-    const POSE_PAIRS = [ ["Neck", "RShoulder"], ["Neck", "LShoulder"], ["RShoulder", "RElbow"],
-        ["RElbow", "RWrist"], ["LShoulder", "LElbow"], ["LElbow", "LWrist"],
-        ["Neck", "RHip"], ["RHip", "RKnee"], ["RKnee", "RAnkle"], ["Neck", "LHip"],
-        ["LHip", "LKnee"], ["LKnee", "LAnkle"], ["Neck", "Nose"], ["Nose", "REye"],
-        ["REye", "REar"], ["Nose", "LEye"], ["LEye", "LEar"] ]
-
-    const widthMult = videoWidth / screenshotWidth
-    const heightMult = videoHeight / screenshotHeight
+    const POSE_PAIRS = [['nose', 'leftEye'], ['nose', 'rightEye'], ['leftEye', 'leftEar'],
+        ['rightEye','rightEar'], ['leftShoulder','rightShoulder'], ['leftShoulder','leftElbow'],
+        ['rightShoulder', 'rightElbow'], ['leftElbow', 'leftWrist'], ['rightElbow', 'rightWrist'],
+        ['leftHip', 'leftShoulder'], ['rightHip', 'leftHip'], ['rightHip','rightShoulder'],
+        ['leftHip', 'leftKnee'], ['rightHip', 'rightKnee'],['leftKnee', 'leftAnkle'], ['rightKnee', 'rightAnkle']]
 
     useEffect(() => {
         if(clearDrawing) {
@@ -23,32 +21,31 @@ export default function Canvas({positions, clearDrawing, setClearDrawing}) {
         }
     }, [clearDrawing])
 
-    function drawCircles(ctx, positions) {
+    function drawCircles(ctx) {
         return new Promise((resolve) => {
-            for(const [key, value] of Object.entries(positions)) {
-                if(positions[key]) {
-                    ctx.fillStyle = key === "LElbow" || key === "LShoulder" ? "blue" : key === "RElbow" || key === "RShoulder" ? "yellow" : "red";
-                    ctx.beginPath();
-                    ctx.arc(value[0] * widthMult, value[1] * heightMult, 3, 0, 2 * Math.PI);
-                    ctx.fill();
-                }
+            for(const pos of positions) {
+                ctx.beginPath();
+                ctx.fillStyle = colorMap[pos.part]
+                ctx.arc(pos.x, pos.y, 3, 0, 2 * Math.PI);
+                ctx.fill();
             }
             resolve()
         })
     }
 
-    function drawLines(ctx, positions) {
+    function drawLines(ctx) {
         return new Promise((resolve) => {
             for(const pair of POSE_PAIRS) {
                 const from = pair[0]
                 const to = pair[1]
-                const fromPoint = positions[from]
-                const toPoint = positions[to]
+                const fromPoint = positions.find((pos) => pos.part === from)
+                const toPoint = positions.find((pos) => pos.part === to)
                 if(fromPoint && toPoint) {
-                    ctx.strokeStyle = "blue";
+                    ctx.strokeStyle = "rgb(26,255,255)";
+                    ctx.lineWidth = 4
                     ctx.beginPath()
-                    ctx.moveTo(fromPoint[0] * widthMult, fromPoint[1] * heightMult)
-                    ctx.lineTo(toPoint[0] * widthMult, toPoint[1] * heightMult)
+                    ctx.moveTo(fromPoint.x, fromPoint.y)
+                    ctx.lineTo(toPoint.x, toPoint.y)
                     ctx.stroke()
                 }
             }
@@ -56,23 +53,12 @@ export default function Canvas({positions, clearDrawing, setClearDrawing}) {
         })
     }
 
-    async function draw(positions) {
-        const currPos = {...positions}
-        if(currPos["LShoulder"] && currPos["RShoulder"] && currPos["LShoulder"][0] < currPos["RShoulder"][0]) {
-            const temp = currPos["LShoulder"]
-            currPos["LShoulder"] = currPos["RShoulder"]
-            currPos["RShoulder"] = temp
-        }
-        if(currPos["LElbow"] && currPos["RElbow"] && currPos["LElbow"][0] < currPos["RElbow"][0]) {
-            const temp = currPos["LElbow"]
-            currPos["LElbow"] = currPos["RElbow"]
-            currPos["RElbow"] = temp
-        }
+    async function draw() {
         const canvas = canvasRef.current
         const ctx = canvas.getContext('2d')
         ctx.clearRect(0,0, canvas.width, canvas.height)
-        await drawCircles(ctx, currPos)
-        await drawLines(ctx, currPos)
+        await drawLines(ctx)
+        await drawCircles(ctx)
     }
 
     useEffect( () => {
