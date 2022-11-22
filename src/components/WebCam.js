@@ -1,7 +1,8 @@
 import Webcam from "react-webcam";
 import Canvas from "./Canvas";
-import {useState, useRef} from "react";
+import {useEffect, useState} from "react";
 import {Button} from "@mui/material";
+import { screenshotWidth, screenshotHeight, screenshotQuality, serverURL, videoWidth, videoHeight, sampleInterval } from '../util/envVars'
 
 export default function WebCam() {
     const [positions, setPositions] = useState({})
@@ -12,16 +13,16 @@ export default function WebCam() {
     async function startDrawing(getScreenshot) {
         setIsRunning(true)
         const interval = setInterval(async () => {
-            const imageSrc = getScreenshot({width: 1920, height: 1080});
+            const imageSrc = getScreenshot({width: screenshotWidth, height: screenshotHeight});
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({image: imageSrc})
             };
-            const response = await fetch(`http://localhost:3001/image`, requestOptions)
+            const response = await fetch(`${serverURL}/image`, requestOptions)
             const ans = JSON.parse(await response.json())
             setPositions(ans)
-        }, 750)
+        }, sampleInterval)
         setRunningInterval(interval)
     }
 
@@ -34,7 +35,7 @@ export default function WebCam() {
 
     return (
         <div style={{position:"relative"}}>
-            <Webcam style={{zIndex:0, width:"640px", height:"480px", position:"absolute", left:0, top:0}} screenshotQuality={0.4} mirrored={true} videoConstraints={{facingMode: "user", width: 640, height: 480,}} screenshotFormat="image/jpeg">
+            <Webcam style={{zIndex:0, width:`${videoWidth}px`, height:`${videoHeight}px`, position:"absolute", left:0, top:0}} screenshotQuality={screenshotQuality} mirrored={true} videoConstraints={{facingMode: "user", width: videoWidth, height: videoHeight,}} screenshotFormat="image/jpeg">
                 {({ getScreenshot }) => (
                     <button disabled={isRunning} style={{position:"absolute", zIndex:10}} onClick={() => startDrawing(getScreenshot)}>
                         Capture photo

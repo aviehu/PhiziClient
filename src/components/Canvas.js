@@ -1,4 +1,5 @@
-import {useRef, useEffect, useState} from "react";
+import {useRef, useEffect} from "react";
+import {screenshotWidth, screenshotHeight, videoWidth, videoHeight} from "../util/envVars";
 
 export default function Canvas({positions, clearDrawing, setClearDrawing}) {
     const canvasRef = useRef(null)
@@ -8,8 +9,8 @@ export default function Canvas({positions, clearDrawing, setClearDrawing}) {
         ["LHip", "LKnee"], ["LKnee", "LAnkle"], ["Neck", "Nose"], ["Nose", "REye"],
         ["REye", "REar"], ["Nose", "LEye"], ["LEye", "LEar"] ]
 
-    const widthMult = 640 / 1920
-    const heightMult = 480 / 1080
+    const widthMult = videoWidth / screenshotWidth
+    const heightMult = videoHeight / screenshotHeight
 
     useEffect(() => {
         if(clearDrawing) {
@@ -79,6 +80,6 @@ export default function Canvas({positions, clearDrawing, setClearDrawing}) {
     }, [positions])
 
     return (
-        <canvas width={"640px"} height={"480px"} ref={canvasRef} style={{zIndex:5, position: "absolute", left:0, top:0}}/>
+        <canvas width={`${videoWidth}px`} height={`${videoHeight}px`} ref={canvasRef} style={{zIndex:5, position: "absolute", left:0, top:0}}/>
     )
 }
