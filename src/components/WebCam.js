@@ -1,31 +1,31 @@
 import Webcam from "react-webcam";
-import Canvas from "./Canvas";
-import {useRef, useState, useCallback, useEffect} from "react";
+import {useRef, useState, useEffect} from "react";
 import {Button} from "@mui/material";
 import {screenshotQuality, videoWidth, videoHeight, sampleInterval, scoreThreshold } from '../util/envVars'
-import * as tf from "@tensorflow/tfjs";
+import "@tensorflow/tfjs";
 import * as posenet from "@tensorflow-models/posenet";
+import drawCircles from "../util/drawCircles";
+import drawLines from "../util/drawLines";
+import clearCanvas from "../util/clearCanvas";
 
 export default function WebCam() {
-    const [positions, setPositions] = useState([])
+
     const [isRunning, setIsRunning] = useState(false)
-    const [runningInterval, setRunningInterval] = useState(null)
-    const [clearDrawing, setClearDrawing] = useState(false)
     const [posenetModel, setPoseNetModel] = useState(null)
 
+    const canvasRef = useRef(null)
     const webcamRef = useRef(null)
 
-    const capture = useCallback(
-        () => {
-            webcamRef.current.video.width = videoWidth;
-            webcamRef.current.video.height = videoHeight;
-            return webcamRef.current.video;
-        },
-        [webcamRef]
-    );
+    useEffect(() => {
+        if(!webcamRef.current) {
+            return
+        }
+        webcamRef.current.video.width = videoWidth;
+        webcamRef.current.video.height = videoHeight;
+    }, [webcamRef.current])
 
-    async function load() {
-        if(!posenetModel) {
+    useEffect(() => {
+        async function load() {
             const posenet_model = await posenet.load({
                 inputResolution: { width: videoWidth, height: videoHeight },
                 scale: 0.8,
@@ -33,16 +33,21 @@ export default function WebCam() {
             setPoseNetModel(posenet_model)
             console.log("ready")
         }
-    }
-
-    useEffect(() => {
         load()
     }, [])
 
-    async function startDrawing() {
-        setIsRunning(true)
-        const interval = setInterval(async () => {
-            const video = capture();
+    useEffect(() => {
+        if(!isRunning || !webcamRef.current || !posenetModel || !canvasRef.current) {
+            return
+        }
+        let internallIsRunning = true
+        async function draw() {
+            const ctx = canvasRef.current.getContext('2d')
+            if (!internallIsRunning) {
+                clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
+                return
+            }
+            const video = webcamRef.current.video;
             const allPositions = await posenetModel.estimateSinglePose(video);
             const positions = allPositions.keypoints.filter((pos) => pos.score > scoreThreshold)
             const ans = positions.map((pos) => {
@@ -52,16 +57,25 @@ export default function WebCam() {
                     y: pos.position.y
                 }
             })
-            setPositions(ans)
-        }, sampleInterval)
-        setRunningInterval(interval)
+            clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
+            drawLines(ctx, ans)
+            drawCircles(ctx, ans)
+            setTimeout(draw, 0)
+        }
+        draw()
+        return () => {
+            internallIsRunning = false
+        }
+    }, [isRunning, webcamRef.current, posenetModel, canvasRef.current])
+
+
+
+    async function startDrawing() {
+        setIsRunning(true)
     }
 
     function stopDrawing() {
         setIsRunning(false)
-        setClearDrawing(true)
-        clearInterval(runningInterval)
-        setRunningInterval(null)
     }
 
     return (
@@ -75,11 +89,11 @@ export default function WebCam() {
                 screenshotFormat="image/jpeg"
             >
             </Webcam>
-            <button disabled={isRunning} style={{position:"absolute", zIndex:10}} onClick={() => startDrawing()}>
-                Capture photo
-            </button>
-            <Canvas positions={positions} clearDrawing={clearDrawing} setClearDrawing={setClearDrawing}></Canvas>
-            <Button style={{position: "absolute", right:0, top: 0}} color="primary" onClick={stopDrawing}>Stop</Button>
+            <Button variant={'contained'} disabled={isRunning} style={{position:"absolute", zIndex:10}} onClick={() => startDrawing()}>
+                Draw Skeleton
+            </Button>
+            <canvas width={`${videoWidth}px`} height={`${videoHeight}px`} ref={canvasRef} style={{zIndex:5, position: "absolute", left:0, top:0}}/>
+            <Button variant={'contained'} style={{position: "absolute", left: videoWidth -71.47, top: 0, zIndex:10}} color="primary" onClick={stopDrawing}>Stop</Button>
         </div>
     )
 }
