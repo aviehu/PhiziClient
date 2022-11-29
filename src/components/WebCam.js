@@ -7,6 +7,7 @@ import * as posenet from "@tensorflow-models/posenet";
 import drawCircles from "../util/drawCircles";
 import drawLines from "../util/drawLines";
 import clearCanvas from "../util/clearCanvas";
+import sendRecording from "../util/sendRecording";
 
 export default function WebCam() {
 
@@ -41,14 +42,17 @@ export default function WebCam() {
             return
         }
         let internallIsRunning = true
+        const recording = []
         async function draw() {
             const ctx = canvasRef.current.getContext('2d')
             if (!internallIsRunning) {
                 clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
+                await sendRecording(recording)
                 return
             }
             const video = webcamRef.current.video;
             const allPositions = await posenetModel.estimateSinglePose(video);
+            recording.push(allPositions)
             const positions = allPositions.keypoints.filter((pos) => pos.score > scoreThreshold)
             const ans = positions.map((pos) => {
                 return {
@@ -67,8 +71,6 @@ export default function WebCam() {
             internallIsRunning = false
         }
     }, [isRunning, webcamRef.current, posenetModel, canvasRef.current])
-
-
 
     async function startDrawing() {
         setIsRunning(true)
