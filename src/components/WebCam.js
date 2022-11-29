@@ -86,7 +86,6 @@ export default function WebCam() {
                 screenshotQuality={screenshotQuality}
                 mirrored={true}
                 videoConstraints={{facingMode: "user", width: videoWidth, height: videoHeight,}}
-                screenshotFormat="image/jpeg"
             >
             </Webcam>
             <Button variant={'contained'} disabled={isRunning} style={{position:"absolute", zIndex:10}} onClick={() => startDrawing()}>
