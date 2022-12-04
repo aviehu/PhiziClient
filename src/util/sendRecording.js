@@ -1,3 +1,5 @@
+import { serverURL } from "./envVars";
+
 function fixRecording(recording) {
     return recording.map((rec) => {
         return rec.keypoints.reduce((prev, curr) => {
@@ -12,11 +14,10 @@ function fixRecording(recording) {
 }
 
 export default async function sendRecording(recording) {
-    console.log(fixRecording(recording))
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(fixRecording(recording))
     };
-    await fetch('http://localhost:3001/image', requestOptions)
+    await fetch(`${serverURL}/image`, requestOptions)
 }
