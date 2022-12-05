@@ -12,7 +12,7 @@ export default function drawLines(ctx, positions){
         const toPoint = positions.find((pos) => pos.part === to)
         if(fromPoint && toPoint) {
             ctx.strokeStyle = "rgb(26,255,255)";
-            ctx.lineWidth = 4
+            ctx.lineWidth = 2
             ctx.beginPath()
             ctx.moveTo(fromPoint.x, fromPoint.y)
             ctx.lineTo(toPoint.x, toPoint.y)

@@ -1,7 +1,7 @@
 import Webcam from "react-webcam";
 import {useRef, useState, useEffect} from "react";
 import {Button} from "@mui/material";
-import {screenshotQuality, videoWidth, videoHeight, sampleInterval, scoreThreshold } from '../util/envVars'
+import { scoreThreshold } from '../util/envVars'
 import "@tensorflow/tfjs";
 import * as posenet from "@tensorflow-models/posenet";
 import drawCircles from "../util/drawCircles";
@@ -13,29 +13,38 @@ export default function WebCam() {
 
     const [isRunning, setIsRunning] = useState(false)
     const [posenetModel, setPoseNetModel] = useState(null)
+    const [sampledWidth, setSampledWidth] = useState(0)
+    const [sampledHeight, setSampledHeight] = useState(0)
 
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
+    const clientWebcamRef = useRef(null)
 
     useEffect(() => {
-        if(!webcamRef.current) {
+        if(!webcamRef.current || sampledWidth !== 0 || sampledHeight !== 0) {
             return
         }
-        webcamRef.current.video.width = videoWidth;
-        webcamRef.current.video.height = videoHeight;
+        const { clientWidth, clientHeight } = webcamRef.current.video
+        webcamRef.current.video.width = clientWidth
+        webcamRef.current.video.height = clientHeight
+        setSampledWidth(clientWidth)
+        setSampledHeight(clientHeight)
     }, [webcamRef.current])
 
     useEffect(() => {
         async function load() {
+            if(sampledWidth === 0) {
+                return
+            }
             const posenet_model = await posenet.load({
-                inputResolution: { width: videoWidth, height: videoHeight },
+                inputResolution: { width: sampledWidth, height: sampledHeight },
                 scale: 0.8,
             });
             setPoseNetModel(posenet_model)
             console.log("ready")
         }
         load()
-    }, [])
+    }, [sampledWidth])
 
     useEffect(() => {
         if(!isRunning || !webcamRef.current || !posenetModel || !canvasRef.current) {
@@ -57,7 +66,7 @@ export default function WebCam() {
             const ans = positions.map((pos) => {
                 return {
                     part: pos.part,
-                    x: videoWidth - pos.position.x,
+                    x: sampledWidth - pos.position.x,
                     y: pos.position.y
                 }
             })
@@ -84,17 +93,26 @@ export default function WebCam() {
         <div style={{position:"relative"}}>
             <Webcam
                 ref={webcamRef}
-                style={{zIndex:0, width:`${videoWidth}px`, height:`${videoHeight}px`, position:"absolute", left:0, top:0}}
-                screenshotQuality={screenshotQuality}
+                style={{zIndex:0, position:"absolute", left:0, top:0}}
                 mirrored={true}
-                videoConstraints={{facingMode: "user", width: videoWidth, height: videoHeight,}}
+                videoConstraints={{facingMode: "user", width: sampledWidth, height: sampledHeight,}}
+            >
+            </Webcam>
+            <Webcam
+                ref={clientWebcamRef}
+                style={{zIndex:1, position:"absolute", left:0, top:0, width:'75vw', objectFit: 'contain'}}
+                mirrored={true}
             >
             </Webcam>
             <Button variant={'contained'} disabled={isRunning} style={{position:"absolute", zIndex:10}} onClick={() => startDrawing()}>
                 Draw Skeleton
             </Button>
-            <canvas width={`${videoWidth}px`} height={`${videoHeight}px`} ref={canvasRef} style={{zIndex:5, position: "absolute", left:0, top:0}}/>
-            <Button variant={'contained'} style={{position: "absolute", left: videoWidth -71.47, top: 0, zIndex:10}} color="primary" onClick={stopDrawing}>Stop</Button>
+            { clientWebcamRef.current ?
+                <canvas width={`${sampledWidth}px`} height={`${sampledHeight}px`} ref={canvasRef} style={{zIndex:5, position: "absolute", left:0, top:0, width:clientWebcamRef.current.video.clientWidth, height:clientWebcamRef.current.video.clientHeight}}/>
+                : null }
+            { clientWebcamRef.current ?
+                <Button variant={'contained'} style={{position: "absolute", left: clientWebcamRef.current.video.clientWidth -71.47, top: 0, zIndex:10}} color="primary" onClick={stopDrawing}>Stop</Button>
+                : null }
         </div>
     )
 }
