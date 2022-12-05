@@ -100,7 +100,7 @@ export default function WebCam() {
             </Webcam>
             <Webcam
                 ref={clientWebcamRef}
-                style={{zIndex:1, position:"absolute", left:0, top:0, width:'75vw', objectFit: 'contain'}}
+                style={{zIndex:1, position:"absolute", left:0, top:0, width:'80vw', objectFit: 'contain'}}
                 mirrored={true}
             >
             </Webcam>
@@ -108,7 +108,7 @@ export default function WebCam() {
                 Draw Skeleton
             </Button>
             { clientWebcamRef.current ?
-                <canvas width={`${sampledWidth}px`} height={`${sampledHeight}px`} ref={canvasRef} style={{zIndex:5, position: "absolute", left:0, top:0, width:clientWebcamRef.current.video.clientWidth, height:clientWebcamRef.current.video.clientHeight}}/>
+                <canvas width={`${sampledWidth}px`} height={`${sampledHeight}px`} ref={canvasRef} style={{zIndex:5, position: "absolute", left:0, top:0, width:clientWebcamRef.current.video.clientWidth, height:clientWebcamRef.current.video.clientHeight, objectFit: 'contain'}}/>
                 : null }
             { clientWebcamRef.current ?
                 <Button variant={'contained'} style={{position: "absolute", left: clientWebcamRef.current.video.clientWidth -71.47, top: 0, zIndex:10}} color="primary" onClick={stopDrawing}>Stop</Button>
