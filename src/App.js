@@ -1,4 +1,4 @@
-import WebCam from "./components/WebCam";
+import WebCam from "./components/3DWebCam";
 
 function App() {
 
