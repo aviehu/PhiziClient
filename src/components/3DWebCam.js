@@ -1,9 +1,8 @@
 import Webcam from "react-webcam";
 import {useRef, useState, useEffect} from "react";
 import {Button} from "@mui/material";
-import { scoreThreshold } from '../util/envVars'
+import { scoreThreshold, sampledVideoWidth } from '../util/envVars'
 import * as poseDetection from '@tensorflow-models/pose-detection'
-import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
 import drawCircles from "../util/drawCircles";
 import drawLines from "../util/drawLines";
@@ -13,30 +12,37 @@ import sendRecording from "../util/sendRecording";
 export default function WebCam() {
 
     const [isRunning, setIsRunning] = useState(false)
-    const [posenetModel, setPoseNetModel] = useState(null)
-    const [sampledWidth, setSampledWidth] = useState(0)
-    const [sampledHeight, setSampledHeight] = useState(0)
+    const [blazePoseModel, setBlazePoseModel] = useState(null)
+    const [cameraRatio, setCameraRation] = useState(-1)
+    const [fps, setFps] = useState(0)
 
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
     const clientWebcamRef = useRef(null)
 
+    async function sampleCameraSize() {
+        const features = {
+            audio: true,
+            video: {
+                width: { ideal: 1800 },
+                height: { ideal: 900 }
+            }
+        };
+        const display = await navigator.mediaDevices.getUserMedia(features);
+        const settings = display.getVideoTracks()[0].getSettings();
+        setCameraRation(settings.width / settings.height)
+    }
+
     useEffect(() => {
-        if(!webcamRef.current || sampledWidth !== 0 || sampledHeight !== 0) {
+        if(!webcamRef.current) {
             return
         }
-        const { clientWidth, clientHeight } = webcamRef.current.video
-        webcamRef.current.video.width = clientWidth
-        webcamRef.current.video.height = clientHeight
-        setSampledWidth(clientWidth)
-        setSampledHeight(clientHeight)
+        webcamRef.current.video.width = sampledVideoWidth
+        webcamRef.current.video.height = sampledVideoWidth / cameraRatio
     }, [webcamRef.current])
 
     useEffect(() => {
         async function load() {
-            if(sampledWidth === 0) {
-                return
-            }
             const model = poseDetection.SupportedModels.BlazePose;
             const detectorConfig = {
                 runtime: 'tfjs',
@@ -44,48 +50,61 @@ export default function WebCam() {
                 modelType: 'full'
             };
             const detector = await poseDetection.createDetector(model, detectorConfig);
-            setPoseNetModel(detector)
+            setBlazePoseModel(detector)
+            await sampleCameraSize()
             console.log("ready")
         }
         load()
-    }, [sampledWidth])
+    }, [])
 
     useEffect(() => {
-        if(!isRunning || !webcamRef.current || !posenetModel || !canvasRef.current) {
+        if(!isRunning || !webcamRef.current || !blazePoseModel || !canvasRef.current) {
             return
         }
         let internallIsRunning = true
+        let lastTimeFrame = Date.now()
         const recording = []
         async function draw() {
             const ctx = canvasRef.current.getContext('2d')
             if (!internallIsRunning) {
                 clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
+                setFps(0)
                 await sendRecording(recording)
                 return
             }
             const video = webcamRef.current.video;
             const estimationConfig = {flipHorizontal: true};
             const timestamp = performance.now();
-            const poses = await posenetModel.estimatePoses(video, estimationConfig, timestamp);
-            recording.push(poses)
-            const positions = poses.keypoints.filter((pos) => pos.score > scoreThreshold)
-            const ans = positions.map((pos) => {
-                return {
-                    part: pos.part,
-                    x: sampledWidth - pos.position.x,
-                    y: pos.position.y
+            const poses = await blazePoseModel.estimatePoses(video, estimationConfig, timestamp);
+            console.log(poses)
+            if(poses[0]) {
+                const currentTimeFrame = Date.now()
+                if(currentTimeFrame - lastTimeFrame > 1000) {
+                    setFps(recording.length)
+                    recording.length = 0
+                    lastTimeFrame = currentTimeFrame
                 }
-            })
-            clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
-            drawLines(ctx, ans)
-            drawCircles(ctx, ans)
-            setTimeout(draw, 0)
+                const positions = poses[0].keypoints.filter((pos) => pos.score > scoreThreshold)
+                const ans = positions.map((pos) => {
+                    return {
+                        part: pos.name,
+                        x: sampledVideoWidth - pos.x,
+                        y: pos.y,
+                        z: pos.z
+                    }
+                })
+                recording.push(ans)
+                clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
+                drawLines(ctx, ans)
+                drawCircles(ctx, ans)
+            }
+            draw()
         }
         draw()
         return () => {
             internallIsRunning = false
         }
-    }, [isRunning, webcamRef.current, posenetModel, canvasRef.current])
+    }, [isRunning, webcamRef.current, blazePoseModel, canvasRef.current])
 
     async function startDrawing() {
         setIsRunning(true)
@@ -97,13 +116,18 @@ export default function WebCam() {
 
     return (
         <div style={{position:"relative"}}>
-            <Webcam
-                ref={webcamRef}
-                style={{zIndex:0, position:"absolute", left:0, top:0}}
-                mirrored={true}
-                videoConstraints={{facingMode: "user", width: sampledWidth, height: sampledHeight,}}
-            >
-            </Webcam>
+            { cameraRatio > 0 ?
+                <Webcam
+                    ref={webcamRef}
+                    style={{zIndex:0, position:"absolute", left:0, top:0}}
+                    mirrored={true}
+                    videoConstraints={{facingMode: "user", width: sampledVideoWidth, height: sampledVideoWidth / cameraRatio,}}
+                    width={250}
+                    height={250 / cameraRatio}
+                >
+                </Webcam> :
+                null
+            }
             <Webcam
                 ref={clientWebcamRef}
                 style={{zIndex:1, position:"absolute", left:0, top:0, width:'80vw', objectFit: 'contain'}}
@@ -114,11 +138,12 @@ export default function WebCam() {
                 Draw Skeleton
             </Button>
             { clientWebcamRef.current ?
-                <canvas width={`${sampledWidth}px`} height={`${sampledHeight}px`} ref={canvasRef} style={{zIndex:5, position: "absolute", left:0, top:0, width:clientWebcamRef.current.video.clientWidth, height:clientWebcamRef.current.video.clientHeight, objectFit: 'contain'}}/>
+                <canvas width={`${sampledVideoWidth}px`} height={`${sampledVideoWidth / cameraRatio}px`} ref={canvasRef} style={{zIndex:5, position: "absolute", left:0, top:0, width:clientWebcamRef.current.video.clientWidth, height:clientWebcamRef.current.video.clientHeight, objectFit: 'contain'}}/>
                 : null }
             { clientWebcamRef.current ?
                 <Button variant={'contained'} style={{position: "absolute", left: clientWebcamRef.current.video.clientWidth -71.47, top: 0, zIndex:10}} color="primary" onClick={stopDrawing}>Stop</Button>
                 : null }
+            <h1 style={{position: "absolute", left: 0, top: 50, zIndex:10}}>fps: {fps}</h1>
         </div>
     )
 }
