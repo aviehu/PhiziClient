@@ -64,12 +64,16 @@ export default function WebCam() {
             return
         }
         let internallIsRunning = true
-        let lastTimeFrame = Date.now()
         const recording = []
+        const fpsInterval = setInterval(() => {
+            setFps(recording.length)
+            recording.length = 0
+        }, 1000)
         async function draw() {
             const ctx = canvasRef.current.getContext('2d')
             if (!internallIsRunning) {
                 clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
+                clearInterval(fpsInterval)
                 setFps(0)
                 await sendRecording(recording)
                 return
@@ -80,12 +84,6 @@ export default function WebCam() {
             const poses = await blazePoseModel.estimatePoses(video, estimationConfig, timestamp);
 
             if(poses[0]) {
-                const currentTimeFrame = Date.now()
-                if(currentTimeFrame - lastTimeFrame > 1000) {
-                    setFps(recording.length)
-                    recording.length = 0
-                    lastTimeFrame = currentTimeFrame
-                }
                 const positions = poses[0].keypoints.filter((pos) => pos.score > scoreThreshold)
                 const ans = positions.map((pos) => {
                     return {
