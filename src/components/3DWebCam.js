@@ -3,6 +3,7 @@ import {useRef, useState, useEffect} from "react";
 import {Button} from "@mui/material";
 import { scoreThreshold, sampledVideoWidth } from '../util/envVars'
 import * as poseDetection from '@tensorflow-models/pose-detection'
+import useWebsocket from '../useWebsocket'
 import '@tensorflow/tfjs-backend-webgl';
 import drawCircles from "../util/drawCircles";
 import drawLines from "../util/drawLines";
@@ -19,6 +20,7 @@ export default function WebCam() {
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
     const clientWebcamRef = useRef(null)
+    const [msg, sendMsg] = useWebsocket()
 
     async function sampleCameraSize() {
         const features = {
@@ -62,12 +64,16 @@ export default function WebCam() {
             return
         }
         let internallIsRunning = true
-        let lastTimeFrame = Date.now()
         const recording = []
+        const fpsInterval = setInterval(() => {
+            setFps(recording.length)
+            recording.length = 0
+        }, 1000)
         async function draw() {
             const ctx = canvasRef.current.getContext('2d')
             if (!internallIsRunning) {
                 clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
+                clearInterval(fpsInterval)
                 setFps(0)
                 await sendRecording(recording)
                 return
@@ -76,14 +82,8 @@ export default function WebCam() {
             const estimationConfig = {flipHorizontal: true};
             const timestamp = performance.now();
             const poses = await blazePoseModel.estimatePoses(video, estimationConfig, timestamp);
-            console.log(poses)
+
             if(poses[0]) {
-                const currentTimeFrame = Date.now()
-                if(currentTimeFrame - lastTimeFrame > 1000) {
-                    setFps(recording.length)
-                    recording.length = 0
-                    lastTimeFrame = currentTimeFrame
-                }
                 const positions = poses[0].keypoints.filter((pos) => pos.score > scoreThreshold)
                 const ans = positions.map((pos) => {
                     return {
@@ -93,6 +93,7 @@ export default function WebCam() {
                         z: pos.z
                     }
                 })
+                sendMsg(JSON.stringify({ pose: ans, timestamp}))
                 recording.push(ans)
                 clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
                 drawLines(ctx, ans)
