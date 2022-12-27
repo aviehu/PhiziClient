@@ -93,7 +93,7 @@ export default function WebCam() {
                         z: pos.z
                     }
                 })
-                sendMsg(JSON.stringify(ans))
+                sendMsg(JSON.stringify({ pose: ans, timestamp}))
                 recording.push(ans)
                 clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
                 drawLines(ctx, ans)
