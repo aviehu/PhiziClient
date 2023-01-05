@@ -1,4 +1,4 @@
-const POSE_PAIRS = [
+export const POSE_PAIRS = [
     ["nose", "left_eye_inner"], ["nose","right_eye_inner"], ["left_eye_inner","left_eye"],
     ["left_eye","left_eye_outer"], ["left_eye_outer","left_ear"], ["right_eye_inner","right_eye"],
     ["right_eye","right_eye_outer"], ["right_eye_outer", "right_ear"], ["mouth_left", "mouth_right"],
@@ -11,7 +11,7 @@ const POSE_PAIRS = [
     ["left_wrist","left_index"], ["left_index","left_pinky"], ["left_shoulder","left_hip"],
     ["left_hip","left_knee"], ["left_knee","left_ankle"], ["left_ankle","left_heel"],
     ["left_ankle","left_foot_index"], ["left_heel", "left_foot_index"]
-]
+] 
 
 export default function drawLines(ctx, positions){
     POSE_PAIRS.forEach((pair) => {
@@ -28,4 +28,4 @@ export default function drawLines(ctx, positions){
             ctx.stroke()
         }
     })
-}
+};

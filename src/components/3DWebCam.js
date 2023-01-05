@@ -10,6 +10,7 @@ import drawLines from "../util/drawLines";
 import clearCanvas from "../util/clearCanvas";
 import sendRecording from "../util/sendRecording";
 import * as mpPose from '@mediapipe/pose';
+import { angles,find_lengths } from "../util/calc";
 
 
 export default function WebCam() {
@@ -108,7 +109,9 @@ export default function WebCam() {
                         z: pos.z
                     }
                 })
-                sendMsg(JSON.stringify({ pose: ans2, timestamp}))
+                const posAngles = angles(ans2)
+                const partsLengths = find_lengths(ans2)
+                sendMsg(JSON.stringify({ pose: ans2, posAngles,partsLengths, timestamp}))
                 recording.push(ans)
                 clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
                 drawLines(ctx, ans)
