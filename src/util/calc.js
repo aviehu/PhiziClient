@@ -1,20 +1,6 @@
-// elbow, shoulder, knee, hip   
-// export const anglesNum = process.env.anglesNum;
-// export const anglesSet = process.env.angles;
-//import fs from 'fs'
+
 import joints from "./joints";
 import {LENGTH_PAIRS} from "./drawLines"
-// import joints from './joints.json' assert { type: 'JSON' };
-//import { serverURL } from "./envVars";
-
-// export default async function sendRecording(angles) {
-//     const requestOptions = {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify(recording)
-//     };
-//     await fetch(`${serverURL}/image`, requestOptions)
-// }
 
 
 function dist(p1, p2) {
