@@ -3,7 +3,7 @@ export const POSE_PAIRS = [
     ["left_eye","left_eye_outer"], ["left_eye_outer","left_ear"], ["right_eye_inner","right_eye"],
     ["right_eye","right_eye_outer"], ["right_eye_outer", "right_ear"], ["mouth_left", "mouth_right"],
     ["left_shoulder" ,"right_shoulder"], ["right_shoulder" ,"right_elbow"], ["right_elbow","right_wrist"],
-    ["right_wrist","right_thumb"], ["right_wrist","right_pinky"], ["right_wrist","right_thumb"],
+    ["right_wrist","right_index"], ["right_wrist","right_pinky"], ["right_wrist","right_thumb"],
     ["right_pinky","right_index"], ["right_shoulder","right_hip"], ["right_hip","right_knee"],
     ["right_knee","right_ankle"], ["right_ankle","right_foot_index"], ["right_ankle","right_heel"],
     ["right_heel" ,"right_foot_index"], ["right_hip","left_hip"], ["left_shoulder","left_elbow"],
@@ -11,7 +11,14 @@ export const POSE_PAIRS = [
     ["left_wrist","left_index"], ["left_index","left_pinky"], ["left_shoulder","left_hip"],
     ["left_hip","left_knee"], ["left_knee","left_ankle"], ["left_ankle","left_heel"],
     ["left_ankle","left_foot_index"], ["left_heel", "left_foot_index"]
-] 
+]
+
+export const LENGTH_PAIRS = [
+    ["left_shoulder", "right_shoulder"], ["right_shoulder", "right_elbow"], ["right_elbow", "right_wrist"],
+    ["right_knee", "right_ankle"], ["right_hip", "left_hip"], ["right_hip", "right_knee"],
+    ["left_shoulder", "left_elbow"], ["left_elbow", "left_wrist"], ["left_shoulder", "left_hip"],
+    ["left_hip", "left_knee"], ["left_knee", "left_ankle"], ["right_shoulder", "right_hip"]
+]
 
 export default function drawLines(ctx, positions){
     POSE_PAIRS.forEach((pair) => {

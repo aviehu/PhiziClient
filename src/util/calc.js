@@ -3,7 +3,7 @@
 // export const anglesSet = process.env.angles;
 //import fs from 'fs'
 import joints from "./joints";
-import {POSE_PAIRS} from "./drawLines"
+import {LENGTH_PAIRS} from "./drawLines"
 // import joints from './joints.json' assert { type: 'JSON' };
 //import { serverURL } from "./envVars";
 
@@ -74,7 +74,7 @@ function find_coord(body, p) {
 export function find_lengths(body){
     const lengths = [];
     
-        const result = POSE_PAIRS.map((pair) => {
+        const result = LENGTH_PAIRS.map((pair) => {
             const from = pair[0];
             const to = pair[1];
             const length = dist(find_coord(body,from),find_coord(body,to))
