@@ -19,8 +19,6 @@ export default function WebCam() {
     const [cameraRatio, setCameraRation] = useState(-1)
     const [fps, setFps] = useState(0)
     const [counter ,setCounter] = useState(0)
-    const [lastFrame, setLastFrame] = useState([])
-    const [handSpread, setHandSpread] = useState([])
 
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
@@ -42,12 +40,12 @@ export default function WebCam() {
     }
 
     useEffect(() => {
-        if(!webcamRef.current) {
+        if(!webcamRef.current || cameraRatio < 0) {
             return
         }
         webcamRef.current.video.width = sampledVideoWidth
         webcamRef.current.video.height = sampledVideoWidth / cameraRatio
-    }, [webcamRef.current])
+    }, [webcamRef.current, cameraRatio])
 
     useEffect(() => {
         async function load() {
@@ -90,6 +88,7 @@ export default function WebCam() {
             const estimationConfig = {flipHorizontal: false};
             const timestamp = performance.now();
             const poses = await blazePoseModel.estimatePoses(video, estimationConfig, timestamp);
+            console.log(poses)
             if(poses[0]) {
                 const positions = poses[0].keypoints.filter((pos) => pos.score > scoreThreshold)
                 const ans = positions.map((pos) => {
@@ -100,9 +99,17 @@ export default function WebCam() {
                         z: pos.z
                     }
                 })
-                sendMsg(JSON.stringify({ pose: ans, timestamp}))
+                const positions2 = poses[0].keypoints3D.filter((pos) => pos.score > scoreThreshold)
+                const ans2 = positions2.map((pos) => {
+                    return {
+                        part: pos.name,
+                        x: pos.x * -1,
+                        y: pos.y,
+                        z: pos.z
+                    }
+                })
+                sendMsg(JSON.stringify({ pose: ans2, timestamp}))
                 recording.push(ans)
-                setLastFrame(ans)
                 clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
                 drawLines(ctx, ans)
                 drawCircles(ctx, ans)
@@ -116,29 +123,6 @@ export default function WebCam() {
             internallIsRunning = false
         }
     }, [isRunning, webcamRef.current, blazePoseModel, canvasRef.current])
-
-    useEffect(() => {
-        if(counter === 10) {
-            setHandSpread(lastFrame)
-        }
-        if(counter === 15) {
-            const leftWristX =  handSpread.find((part) => part.part === 'left_wrist').x
-            const leftShoulderX = handSpread.find((part) => part.part === 'left_shoulder').x
-            const rightWristX =  handSpread.find((part) => part.part === 'right_wrist').x
-            const rightShoulderX = handSpread.find((part) => part.part === 'right_shoulder').x
-            const B = (Math.abs(leftWristX - leftShoulderX) + Math.abs(rightWristX - rightShoulderX)) / 2
-            const leftWristZ =  lastFrame.find((part) => part.part === 'left_wrist').z
-            const leftShoulderZ = lastFrame.find((part) => part.part === 'left_shoulder').z
-            const rightWristZ =  lastFrame.find((part) => part.part === 'right_wrist').z
-            const rightShoulderZ = lastFrame.find((part) => part.part === 'right_shoulder').z
-            const C = (Math.abs(leftWristZ - leftShoulderZ) + Math.abs(rightWristZ - rightShoulderZ)) / 2
-            const U = B / C
-            sendMsg(JSON.stringify({ pose: [], U: U }))
-            console.log('B', B)
-            console.log('C', C)
-            console.log('U', U)
-        }
-    }, [counter])
 
     async function startDrawing() {
         setIsRunning(true)
