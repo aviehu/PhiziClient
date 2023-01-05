@@ -9,6 +9,8 @@ import drawCircles from "../util/drawCircles";
 import drawLines from "../util/drawLines";
 import clearCanvas from "../util/clearCanvas";
 import sendRecording from "../util/sendRecording";
+import * as mpPose from '@mediapipe/pose';
+
 
 export default function WebCam() {
 
@@ -16,6 +18,9 @@ export default function WebCam() {
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [cameraRatio, setCameraRation] = useState(-1)
     const [fps, setFps] = useState(0)
+    const [counter ,setCounter] = useState(0)
+    const [lastFrame, setLastFrame] = useState([])
+    const [handSpread, setHandSpread] = useState([])
 
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
@@ -26,12 +31,13 @@ export default function WebCam() {
         const features = {
             audio: true,
             video: {
-                width: { ideal: 1800 },
-                height: { ideal: 900 }
+                width: { ideal: 640 },
+                height: { ideal: 480 }
             }
         };
         const display = await navigator.mediaDevices.getUserMedia(features);
         const settings = display.getVideoTracks()[0].getSettings();
+        console.log(settings)
         setCameraRation(settings.width / settings.height)
     }
 
@@ -47,9 +53,9 @@ export default function WebCam() {
         async function load() {
             const model = poseDetection.SupportedModels.BlazePose;
             const detectorConfig = {
-                runtime: 'tfjs',
-                enableSmoothing: true,
-                modelType: 'full'
+                runtime: 'mediapipe',
+                modelType: 'full',
+                solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/pose@${mpPose.VERSION}`
             };
             const detector = await poseDetection.createDetector(model, detectorConfig);
             setBlazePoseModel(detector)
@@ -66,9 +72,11 @@ export default function WebCam() {
         let internallIsRunning = true
         const recording = []
         const fpsInterval = setInterval(() => {
+            setCounter(counter => counter + 1)
             setFps(recording.length)
             recording.length = 0
         }, 1000)
+
         async function draw() {
             const ctx = canvasRef.current.getContext('2d')
             if (!internallIsRunning) {
@@ -79,10 +87,9 @@ export default function WebCam() {
                 return
             }
             const video = webcamRef.current.video;
-            const estimationConfig = {flipHorizontal: true};
+            const estimationConfig = {flipHorizontal: false};
             const timestamp = performance.now();
             const poses = await blazePoseModel.estimatePoses(video, estimationConfig, timestamp);
-
             if(poses[0]) {
                 const positions = poses[0].keypoints.filter((pos) => pos.score > scoreThreshold)
                 const ans = positions.map((pos) => {
@@ -95,17 +102,43 @@ export default function WebCam() {
                 })
                 sendMsg(JSON.stringify({ pose: ans, timestamp}))
                 recording.push(ans)
+                setLastFrame(ans)
                 clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
                 drawLines(ctx, ans)
                 drawCircles(ctx, ans)
             }
-            draw()
+            setTimeout(draw, 0)
         }
         draw()
+        setTimeout(draw, 20)
+        setTimeout(draw, 80)
         return () => {
             internallIsRunning = false
         }
     }, [isRunning, webcamRef.current, blazePoseModel, canvasRef.current])
+
+    useEffect(() => {
+        if(counter === 10) {
+            setHandSpread(lastFrame)
+        }
+        if(counter === 15) {
+            const leftWristX =  handSpread.find((part) => part.part === 'left_wrist').x
+            const leftShoulderX = handSpread.find((part) => part.part === 'left_shoulder').x
+            const rightWristX =  handSpread.find((part) => part.part === 'right_wrist').x
+            const rightShoulderX = handSpread.find((part) => part.part === 'right_shoulder').x
+            const B = (Math.abs(leftWristX - leftShoulderX) + Math.abs(rightWristX - rightShoulderX)) / 2
+            const leftWristZ =  lastFrame.find((part) => part.part === 'left_wrist').z
+            const leftShoulderZ = lastFrame.find((part) => part.part === 'left_shoulder').z
+            const rightWristZ =  lastFrame.find((part) => part.part === 'right_wrist').z
+            const rightShoulderZ = lastFrame.find((part) => part.part === 'right_shoulder').z
+            const C = (Math.abs(leftWristZ - leftShoulderZ) + Math.abs(rightWristZ - rightShoulderZ)) / 2
+            const U = B / C
+            sendMsg(JSON.stringify({ pose: [], U: U }))
+            console.log('B', B)
+            console.log('C', C)
+            console.log('U', U)
+        }
+    }, [counter])
 
     async function startDrawing() {
         setIsRunning(true)
@@ -145,6 +178,7 @@ export default function WebCam() {
                 <Button variant={'contained'} style={{position: "absolute", left: clientWebcamRef.current.video.clientWidth -71.47, top: 0, zIndex:10}} color="primary" onClick={stopDrawing}>Stop</Button>
                 : null }
             <h1 style={{position: "absolute", left: 0, top: 50, zIndex:10}}>fps: {fps}</h1>
+            <h1 style={{position: "absolute", left: 0, top: 100, zIndex:10}}>{counter}</h1>
         </div>
     )
 }
