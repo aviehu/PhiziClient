@@ -1,4 +1,4 @@
-const joints ={
+const joints = {
     "left_elbow": {
         "p1": "left_wrist",
         "p2": "left_elbow",

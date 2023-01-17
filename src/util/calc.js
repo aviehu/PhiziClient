@@ -69,8 +69,5 @@ export function find_lengths(body){
             // let points = [find_coord(body, joint.p1), find_coord(body, joint.p2), find_coord(body, joint.p3)]
             
         })
-        
         return lengths.filter((coord)=>coord.length > 0)
-
-
 }
