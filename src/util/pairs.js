@@ -19,20 +19,3 @@ export const LENGTH_PAIRS = [
     ["left_shoulder", "left_elbow"], ["left_elbow", "left_wrist"], ["left_shoulder", "left_hip"],
     ["left_hip", "left_knee"], ["left_knee", "left_ankle"], ["right_shoulder", "right_hip"]
 ]
-
-export default function drawLines(ctx, positions){
-    POSE_PAIRS.forEach((pair) => {
-        const from = pair[0]
-        const to = pair[1]
-        const fromPoint = positions.find((pos) => pos.part === from)
-        const toPoint = positions.find((pos) => pos.part === to)
-        if(fromPoint && toPoint) {
-            ctx.strokeStyle = "rgb(26,255,255)";
-            ctx.lineWidth = 2
-            ctx.beginPath()
-            ctx.moveTo(fromPoint.x, fromPoint.y)
-            ctx.lineTo(toPoint.x, toPoint.y)
-            ctx.stroke()
-        }
-    })
-};

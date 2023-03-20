@@ -1,10 +1,10 @@
-import WebCam from "./components/3DWebCam";
+import ClientController from "./components/ClientController";
 
 function App() {
 
     return (
         <div>
-            <WebCam/>
+            <ClientController/>
         </div>
     );
 }
