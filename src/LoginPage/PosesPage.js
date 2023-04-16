@@ -1,4 +1,4 @@
-import {useState,input, useEffect} from "react";
+import {useState,input, useEffect,useRef} from "react";
 import {Button,Paper, Modal, ImageList, ImageListItem, Stack, TextField,Typography,Slider} from "@mui/material";
 import api from "../util/api";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ const detectorConfig = {
 };
 
 export default function PosesPage() {
-
+    const imgRef = useRef();
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [fullPose, setFullPose] = useState()
 
@@ -22,7 +22,7 @@ export default function PosesPage() {
     const [estimateTime, setEstimateTime] = useState(5);
     const [minAge, setMinAge] = useState(0);
     const [maxAge, setMaxAge] = useState(0);
-    const [img, setImage] = useState([]);
+    const [img, setImg] = useState([]);
 
     const navigate = useNavigate()
 
@@ -36,6 +36,9 @@ export default function PosesPage() {
     function handleClose(){
         setOpen(false);
     }
+    // useEffect(() => {
+    //     imgRef.src = URL.createObjectURL(img)
+    // },[img])
     useEffect(() => {
         async function load() {
             const model = poseDetection.SupportedModels.BlazePose;
@@ -46,14 +49,14 @@ export default function PosesPage() {
         load()
     }, [])
         async function onImageChange(e){
-            setImage([...e.target.files]);
-            console.log(img);
+            setImg(e.target.files[0]);
+            console.log(img.src);
             if(img){
                 const estimationConfig = {flipHorizontal: false};
                 const timestamp = performance.now();
                 const htmlImg = document.createElement('htmlImg');
-                img.src = img;
-                const poses = await blazePoseModel.estimatePoses(htmlImg);
+                // img.src = img;
+                const poses = await blazePoseModel.estimatePoses(imgRef);
                 console.log(poses);
             const positions = poses[0]
             if(positions) {
@@ -109,6 +112,7 @@ export default function PosesPage() {
                         <TextField label="min age" value={minAge} onChange={(event) => setMinAge(event.target.value)}></TextField>
                         <TextField label="max age" value={maxAge} onChange={(event) => setMaxAge(event.target.value)}></TextField>
                         <input type="file" multiple accept="image/*" onChange={onImageChange} />
+                        {/* <img ref={imgRef}></img> */}
                         
                         <Button disabled={!fullPose || !estimateTime || !minAge || !maxAge} onClick={handleAddPose}>Add</Button>
                         
