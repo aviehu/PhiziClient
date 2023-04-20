@@ -8,6 +8,8 @@ import { calcLengths, calcAngles } from '../components/calc'
 import get3DPositions from "../util/get3DPositions";
 import {sampledVideoWidth} from "../util/envVars";
 import useWebsocket from "../components/useWebsocket";
+import {drawCircles, drawLines} from "../components/canvas";
+import get2DPositions from "../util/get2DPositions";
 
 const detectorConfig = {
     runtime: 'mediapipe',
@@ -19,25 +21,17 @@ export default function PosesPage() {
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [fullPose, setFullPose] = useState()
     const [imageUrl, setImageUrl] = useState(null)
-    const [open, setOpen] = useState(false);
     const [estimateTime, setEstimateTime] = useState(5);
     const [minAge, setMinAge] = useState(0);
     const [maxAge, setMaxAge] = useState(0);
     const imageRef = useRef()
-    const [msg, sendMsg] = useWebsocket()
+    const canvasRef = useRef()
 
     const navigate = useNavigate()
 
     async function handleAddPose() {
         await api.sendPose({minAge, maxAge, estimateTime, ...fullPose})
         console.log(fullPose)
-    }
-
-    function handleOpen() {
-        setOpen(true);
-    }
-    function handleClose(){
-        setOpen(false);
     }
 
 
@@ -64,8 +58,13 @@ export default function PosesPage() {
                 if(positions) {
                     const poses3D = get3DPositions(positions)
                     const posAngles = calcAngles(poses3D)
+                    const poses2D = get2DPositions(positions)
                     const partsLengths = calcLengths(poses3D)
                     setFullPose({ pose: poses3D, posAngles ,partsLengths})
+                    const ctx = canvasRef.current.getContext('2d')
+                    console.log(poses2D)
+                    drawLines(ctx, poses2D)
+                    drawCircles(ctx, poses2D)
                 }
             }, 500)
         }
@@ -86,24 +85,12 @@ export default function PosesPage() {
 
     
     return (
-        <div style={{display:"flex", position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center"}}>
-            <Button variant="contained" color="secondary" onClick={handleOpen}>
-                Add new Pose
-            </Button>
-            <Modal
-                style={{ display: 'flex',alignItems: 'center',justifyContent: 'center', overflow:"scroll"}}
-                aria-labelledby="transition-modal-title"
-                aria-describedby="transition-modal-description"
-                open={open}
-                onClose={handleClose}
-                closeAfterTransition
-            >
-
-                <Paper style={{padding:50, height: "60%", width: "60%", justifyContent: "center", alignItems: "center"}}>
-                    <Stack direction="column" spacing={3}>
-                        <Stack style={{textAlign: "center"}} direction="row" spacing={2}>
+        <div  style={{display: 'flex', position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center"}}>
+            <Paper style={{padding:100, display: 'flex', justifyContent: "center", alignItems: "center"}}>
+                <Stack direction="column" spacing={3}>
+                    <Stack style={{textAlign: "center"}} direction="row" spacing={2}>
                         <Typography>
-                        estimated Time:
+                            estimated Time:
                         </Typography>
                         <Slider
                             value={estimateTime}
@@ -116,15 +103,15 @@ export default function PosesPage() {
                             valueLabelDisplay="auto"
 
                         />
-                        </Stack>
-                        <TextField label="min age" value={minAge} onChange={(event) => setMinAge(event.target.value)}></TextField>
-                        <TextField label="max age" value={maxAge} onChange={(event) => setMaxAge(event.target.value)}></TextField>
-                        <input type="file" multiple accept="image/*" onChange={onImageChange} />
-                        <img ref={imageRef} hidden={false} src={imageUrl}></img>
-                        <Button disabled={!fullPose || !estimateTime || !minAge || !maxAge} onClick={handleAddPose}>Add</Button>
                     </Stack>
-                </Paper>
-            </Modal>
+                    <TextField label="min age" value={minAge} onChange={(event) => setMinAge(event.target.value)}></TextField>
+                    <TextField label="max age" value={maxAge} onChange={(event) => setMaxAge(event.target.value)}></TextField>
+                    <input type="file" multiple accept="image/*" onChange={onImageChange} />
+                    <img ref={imageRef} hidden={false} src={imageUrl}></img>
+                    <Button disabled={!fullPose || !estimateTime || !minAge || !maxAge} onClick={handleAddPose}>Add</Button>
+                </Stack>
+            </Paper>
+            {imageRef.current ? <canvas ref={canvasRef} style={{ width:'100%', height:'100%', position:'absolute', zIndex:-5,}}/> : null}
         </div>
     )
 }
