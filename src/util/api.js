@@ -27,4 +27,11 @@ api.sendPose = async function (body) {
     return await response.json()
 }
 
+
+api.getAllUsers = async function () {
+    const requestOptions = postRequestOptions()
+    const response = await fetch(`${serverUrl}/getAllUsers`, requestOptions)
+    return await response.json()
+}
+
 export default api

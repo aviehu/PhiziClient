@@ -1,7 +1,10 @@
-import {useState} from "react";
-import {Button, Paper, Stack, TextField} from "@mui/material";
+import { createContext, useState } from "react";
+import { Button, Paper, Stack, TextField } from "@mui/material";
 import api from "../util/api";
 import { useNavigate } from "react-router-dom";
+import { createUnarySpacing } from "@mui/system";
+
+export const curUser = createContext("batya")
 
 export default function LoginPage() {
 
@@ -11,8 +14,9 @@ export default function LoginPage() {
     const navigate = useNavigate()
 
     async function handleLogin() {
-        const response = await api.login({email, password})
-        if(!response.error) {
+        const response = await api.login({ email, password })
+        if (!response.error) {
+            console.log(curUser)
             navigate('/app')
             return
         }
@@ -27,11 +31,13 @@ export default function LoginPage() {
     }
 
     return (
-        <div style={{display:"flex", position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center"}}>
-            <Paper style={{display: "flex", height: "60%", width: "60%", justifyContent: "center", alignItems: "center"}}>
-                <Stack style={{textAlign: "center"}} direction="column" spacing={3}>
-                    <h1 style={{paddingBottom: 4}}>Login</h1>
-                    <TextField label="Email" value={email} onChange={(event) => setEmail(event.target.value)}></TextField>
+        <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
+            <Paper style={{ display: "flex", height: "60%", width: "60%", justifyContent: "center", alignItems: "center" }}>
+                <Stack style={{ textAlign: "center" }} direction="column" spacing={3}>
+                    <h1 style={{ paddingBottom: 4 }}>Login</h1>
+                    <curUser.Provider value={email}>
+                        <TextField label="Email" value={email} onChange={(event) => setEmail(event.target.value)}></TextField>
+                    </curUser.Provider>
                     <TextField type={"password"} label="Password" value={password} onChange={(event) => setPassword(event.target.value)}></TextField>
                     <Stack justifyContent={"space-between"} direction="row" spacing={3}>
                         <Button disabled={!email || !password} onClick={handleLogin}>Login</Button>
@@ -41,5 +47,6 @@ export default function LoginPage() {
                 </Stack>
             </Paper>
         </div>
+
     )
 }

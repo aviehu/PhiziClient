@@ -18,6 +18,9 @@ export default function LoginPage() {
     function handleTrainings() {
         navigate('/trainings')
     }
+    function handleDisplayUsers() {
+        navigate('/users')
+    }
 
     return (
         <div style={{display:"flex", position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center"}}>
@@ -25,6 +28,7 @@ export default function LoginPage() {
                 <Stack style={{textAlign: "center"}} direction="column" spacing={3}>
                     <Button onClick={handlePoses}>Poses</Button>
                     <Button onClick={handleTrainings}>Trainings</Button>
+                    <Button onClick={handleDisplayUsers}>Display Users</Button>
                 </Stack>
             </Paper>
         </div>
