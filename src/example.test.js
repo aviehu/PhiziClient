@@ -1,5 +1,6 @@
 import get2DPositions from './util/get2DPositions'
 import {sampledVideoWidth, scoreThreshold} from "./util/envVars";
+
 test('get2DPositions', () => {
     const poses = {
         keypoints: [{
