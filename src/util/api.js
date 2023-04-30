@@ -21,4 +21,17 @@ api.register = async function (body) {
     return await response.json()
 }
 
+api.sendPose = async function (body) {
+    const requestOptions = postRequestOptions(body)
+    const response = await fetch(`${serverUrl}/pose`, requestOptions)
+    return await response.json()
+}
+
+
+api.getAllUsers = async function () {
+    const requestOptions = postRequestOptions()
+    const response = await fetch(`${serverUrl}/getAllUsers`, requestOptions)
+    return await response.json()
+}
+
 export default api
