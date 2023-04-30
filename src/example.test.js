@@ -17,5 +17,6 @@ test('get2DPositions', () => {
         y: 456,
         z: 789,
     }]
+
     expect(get2DPositions(poses)).toMatchObject(expectedResult);
 });
