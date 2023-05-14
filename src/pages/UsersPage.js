@@ -1,13 +1,11 @@
-import { Icon, createContext, Fragment, useState, useEffect } from "react";
-import { SvgIcon, IconButton, Divider, ListItemText, List, ListItem, Typography, Avatar, ListItemAvatar, Button } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Divider, ListItemText, List, ListItem, Typography, Avatar, ListItemAvatar, Button } from "@mui/material";
 import api from "../util/api";
 import { useNavigate } from "react-router-dom";
-import { createUnarySpacing } from "@mui/system";
 import userLogo from "../person.png";
-import leftArrow from "../leftarrow.svg";
 
 function handleGoals(user) {
-
+    
 }
 
 function DisplayUsers(usersList) {
@@ -46,7 +44,7 @@ function DisplayUsers(usersList) {
     })
 };
 
-export default function LoginPage() {
+export default function UsersPage() {
 
     const [usersList, setUsersList] = useState([])
 

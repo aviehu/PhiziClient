@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
 
+    const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [age, setAge] = useState()
@@ -20,7 +21,7 @@ export default function RegisterPage() {
     function handleRegister() {
         const bmi = weight / (height / 100)
         const goals = []
-        const response = api.register({ email, password, age, weight, height, goals, bmi })
+        const response = api.register({ name, email, password, age, weight, height, goals, bmi })
         if (!response.error) {
             navigate('/app')
         }
@@ -35,6 +36,7 @@ export default function RegisterPage() {
             <Paper style={{ display: "flex", height: "80%", width: "60%", justifyContent: "center", alignItems: "center" }}>
                 <Stack style={{ textAlign: "center" }} direction="column" spacing={3}>
                     <h1 style={{ paddingBottom: 4 }}>Register</h1>
+                    <TextField label="Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
                     <TextField label="Email" value={email} onChange={(event) => setEmail(event.target.value)}></TextField>
                     <TextField type={"password"} label="Password" value={password} onChange={(event) => setPassword(event.target.value)}></TextField>
                     <TextField label="Age" value={age} onChange={(event) => setAge(event.target.value)}></TextField>
@@ -52,13 +54,10 @@ export default function RegisterPage() {
                             valueLabelFormat={valueLabelFormat}
                             onChange={(event) => setHeight(event.target.value)}
                             valueLabelDisplay="auto"
-
-
                         />
                     </Stack>
-                    {/* <TextField label="Height" value={height} onChange={(event) => setHeight(event.target.value)}></TextField> */}
                     <Stack justifyContent={"space-between"} direction="row" spacing={3}>
-                        <Button disabled={!height || !email || !password || !age} onClick={handleRegister}>Register</Button>
+                        <Button disabled={!name || !email || !password} onClick={handleRegister}>Register</Button>
                         <Button onClick={handleBack}>Back</Button>
                     </Stack>
                 </Stack>

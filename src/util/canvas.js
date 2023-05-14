@@ -1,11 +1,13 @@
-import colorMap from "../util/colorMap";
-import {POSE_PAIRS} from "../util/pairs";
+import colorMap from "./colorMap";
+import {POSE_PAIRS} from "./pairs";
+import get2DPositions from "./get2DPositions";
 
 export function clearCanvas(ctx, width, height) {
     ctx.clearRect(0,0, width, height)
 }
 
 export function drawLines(ctx, positions) {
+    console.log("drawing")
     POSE_PAIRS.forEach((pair) => {
         const from = pair[0]
         const to = pair[1]
@@ -29,4 +31,13 @@ export function drawCircles(ctx, positions) {
         ctx.arc(pos.x, pos.y, 2, 0, 2 * Math.PI);
         ctx.fill();
     })
+}
+
+export function drawUserSkeleton(ctx, positions, canvasRef) {
+    if (positions) {
+        const poses2D = get2DPositions(positions)
+        clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
+        drawLines(ctx, poses2D)
+        drawCircles(ctx, poses2D)
+    }
 }

@@ -1,5 +1,5 @@
-import joints from "../util/joints";
-import {LENGTH_PAIRS} from "../util/pairs";
+import joints from "./joints";
+import {LENGTH_PAIRS} from "./pairs";
 
 export function dist(p1, p2) {
     if(p1 != null && p2!= null){

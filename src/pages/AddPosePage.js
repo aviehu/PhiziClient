@@ -1,15 +1,12 @@
 import {useState,input, useEffect,useRef} from "react";
-import {Button,Paper, Modal, ImageList, ImageListItem, Stack, TextField,Typography,Slider} from "@mui/material";
+import {Button,Paper, Stack, TextField,Typography,Slider} from "@mui/material";
 import api from "../util/api";
-import { useNavigate } from "react-router-dom";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
-import { calcLengths, calcAngles } from '../components/calc'
+import { calcLengths, calcAngles } from '../util/calc'
 import get3DPositions from "../util/get3DPositions";
-import {sampledVideoWidth} from "../util/envVars";
-import useWebsocket from "../components/useWebsocket";
-import {drawCircles, drawLines} from "../components/canvas";
 import get2DPositions from "../util/get2DPositions";
+import Resizer from "react-image-file-resizer";
 
 const detectorConfig = {
     runtime: 'mediapipe',
@@ -17,43 +14,38 @@ const detectorConfig = {
     solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/pose@${mpPose.VERSION}`
 };
 
-export default function PosesPage() {
+export default function AddPosePage() {
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [fullPose, setFullPose] = useState()
     const [imageUrl, setImageUrl] = useState(null)
+    const [image, setImage] = useState(null)
+    const [resizedImage, setResizedImage] = useState(null)
     const [estimateTime, setEstimateTime] = useState(5);
     const [minAge, setMinAge] = useState(0);
     const [maxAge, setMaxAge] = useState(0);
     const imageRef = useRef()
-    const canvasRef = useRef()
-
-    const navigate = useNavigate()
+    const resizedImageRef = useRef()
 
     async function handleAddPose() {
         await api.sendPose({minAge, maxAge, estimateTime, ...fullPose})
-        console.log(fullPose)
     }
-
 
     useEffect(() => {
         async function load() {
             const model = poseDetection.SupportedModels.BlazePose;
             const detector = await poseDetection.createDetector(model, detectorConfig);
             setBlazePoseModel(detector)
-            console.log("ready for pose")
         }
         load()
     }, [])
 
-
     useEffect(() => {
         async function runPoseDetection() {
-            imageRef.current.width = 250
             setTimeout(async () => {
-                console.log(imageRef.current);
+
                 const timestamp = performance.now();
-                const estimationConfig = {flipHorizontal: false};
-                const poses = await blazePoseModel.estimatePoses(imageRef.current, estimationConfig, timestamp);
+                const estimationConfig = {flipHorizontal: true};
+                const poses = await blazePoseModel.estimatePoses(resizedImageRef.current, estimationConfig, timestamp);
                 const positions = poses[0]
                 if(positions) {
                     const poses3D = get3DPositions(positions)
@@ -61,29 +53,49 @@ export default function PosesPage() {
                     const poses2D = get2DPositions(positions)
                     const partsLengths = calcLengths(poses3D)
                     setFullPose({ pose: poses3D, posAngles ,partsLengths})
-                    const ctx = canvasRef.current.getContext('2d')
-                    console.log(poses2D)
-                    drawLines(ctx, poses2D)
-                    drawCircles(ctx, poses2D)
                 }
             }, 500)
         }
         if(imageUrl) {
             runPoseDetection()
         }
-    }, [imageUrl])
+    }, [resizedImage])
+
+    useEffect(() => {
+        if(!image || !imageUrl || !imageRef.current){
+            return
+        }
+        setTimeout(()=> {
+            const ratio = imageRef.current.width / imageRef.current.height
+            const h = 250/ratio
+            Resizer.imageFileResizer(
+                image,
+                250,
+                h,
+                "PNG",
+                100,
+                0,
+                (uri) => {
+                    setResizedImage(URL.createObjectURL(uri))
+                },
+                "file",
+                200,
+                200
+            )
+        },300)
+        
+    },[imageUrl,imageRef.current,image])
 
     async function onImageChange(e){
         const img = e.target.files[0];
+        setImage(img)
         setImageUrl(URL.createObjectURL(img))
     }
-
 
     function valueLabelFormat(value) {
         return `${value} sec`;
     }
 
-    
     return (
         <div  style={{display: 'flex', position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center"}}>
             <Paper style={{padding:100, display: 'flex', justifyContent: "center", alignItems: "center"}}>
@@ -107,11 +119,19 @@ export default function PosesPage() {
                     <TextField label="min age" value={minAge} onChange={(event) => setMinAge(event.target.value)}></TextField>
                     <TextField label="max age" value={maxAge} onChange={(event) => setMaxAge(event.target.value)}></TextField>
                     <input type="file" multiple accept="image/*" onChange={onImageChange} />
-                    <img ref={imageRef} hidden={false} src={imageUrl}></img>
+                    {imageUrl? 
+                        <img  hidden={false} src={imageUrl} style={{width: 250}}></img> : null
+                    }
+                    
                     <Button disabled={!fullPose || !estimateTime || !minAge || !maxAge} onClick={handleAddPose}>Add</Button>
                 </Stack>
             </Paper>
-            {imageRef.current ? <canvas ref={canvasRef} style={{ width:'100%', height:'100%', position:'absolute', zIndex:-5,}}/> : null}
+            {imageUrl? 
+                <img ref={imageRef} hidden={false} src={imageUrl} style={{zIndex: -1, position:'absolute', top: 0, left:0, width: 250}}></img> : null
+            }
+            {resizedImage? 
+                <img ref={resizedImageRef} hidden={false} src={resizedImage} style={{zIndex: -1, position:'absolute', top: 0, left:0, width: 250}}></img> : null
+            }
         </div>
     )
 }
