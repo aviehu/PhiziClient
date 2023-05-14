@@ -14,15 +14,12 @@ const detectorConfig = {
     solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/pose@${mpPose.VERSION}`
 };
 
-export default function AddPosePage() {
+export default function AddPoseForm({setGoals, setName, setKeypoints, name, goals, submitForm, switchView}) {
     const [blazePoseModel, setBlazePoseModel] = useState(null)
-    const [fullPose, setFullPose] = useState()
     const [imageUrl, setImageUrl] = useState(null)
     const [image, setImage] = useState(null)
     const [resizedImage, setResizedImage] = useState(null)
     const [estimateTime, setEstimateTime] = useState(5);
-    const [goals, setGoals] = useState([]);
-    const [name, setName] = useState("");
     const imageRef = useRef()
     const resizedImageRef = useRef()
 
@@ -42,12 +39,7 @@ export default function AddPosePage() {
         },
       }
 
-    async function handleAddPose() {
-        const dataGoals = goals.map((goal) => goalsNamesMatch[goal])
-        console.log("datagoals:",dataGoals)
-        await api.sendPose({name: name, goals: dataGoals, keypoints: {...fullPose}})
-    }
-
+      console.log(goals)
     useEffect(() => {
         async function load() {
             const model = poseDetection.SupportedModels.BlazePose;
@@ -70,7 +62,7 @@ export default function AddPosePage() {
                     const posAngles = calcAngles(poses3D)
                     const poses2D = get2DPositions(positions)
                     const partsLengths = calcLengths(poses3D)
-                    setFullPose({ pose: poses3D, posAngles ,partsLengths})
+                    setKeypoints(poses3D)
                 }
             }, 500)
         }
@@ -167,7 +159,8 @@ export default function AddPosePage() {
                     {imageUrl? 
                         <img  hidden={false} src={imageUrl} style={{width: 250}}></img> : null
                     }
-                    <Button disabled={!fullPose || !name || !goals} onClick={handleAddPose}>Add</Button>
+                    <Button onClick={switchView}>Take a Picture</Button>
+                    <Button disabled={!name || !goals} onClick={submitForm}>Add</Button>
                 </Stack>
             </Paper>
             {imageUrl? 

@@ -1,9 +1,9 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { sampledVideoWidth } from "../util/envVars";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
 import Webcam from "react-webcam";
-import {Button, Snackbar, Stack} from "@mui/material";
+import {Button} from "@mui/material";
 import getCameraRatio from "../util/getCameraRatio";
 import {clearCanvas, drawUserSkeleton} from '../util/canvas'
 import PoseMatchingCanvas from "./PoseMatchingCanvas";
@@ -14,7 +14,7 @@ const detectorConfig = {
     solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/pose@${mpPose.VERSION}`
 };
 
-export default function PoseFromWebcam({onSubmit}) {
+export default function PoseFromWebcam({setKeypoints, switchView}) {
     const [isRunning, setIsRunning] = useState(false)
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [cameraRatio, setCameraRatio] = useState(-1)
@@ -112,7 +112,10 @@ export default function PoseFromWebcam({onSubmit}) {
                 : null}
             { screenShot ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={screenShot}/> : null }
             { screenShot ?
-                <Button variant={'contained'} style={{ position: 'absolute', right: 30, bottom: 80 }} onClick={onSubmit}>
+                <Button variant={'contained'} style={{ position: 'absolute', right: 30, bottom: 80 }} onClick={() => {
+                    setKeypoints(screenShot)
+                    switchView()
+                }}>
                     Accept
                 </Button> :
                 null
