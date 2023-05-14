@@ -1,7 +1,7 @@
 import AppPage from "./pages/AppPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
-import AddPosePage from "./pages/AddPosePage";
+import AddPoseForm from "./components/AddPoseForm";
 import AdminPage from "./pages/AdminPage";
 import UsersPage from "./pages/UsersPage";
 import AppBar from './components/AppBar'
@@ -13,6 +13,7 @@ import {
 } from "react-router-dom";
 import SessionPage from "./pages/SessionPage";
 import PoseFromWebcam from "./components/PoseFromWebcam";
+import AddPosePage from "./pages/AddPosePage";
 
 function App() {
 
