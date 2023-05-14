@@ -6,6 +6,7 @@ export function clearCanvas(ctx, width, height) {
 }
 
 export function drawLines(ctx, positions) {
+    console.log("drawing")
     POSE_PAIRS.forEach((pair) => {
         const from = pair[0]
         const to = pair[1]

@@ -11,6 +11,7 @@ import { clearCanvas, drawLines, drawCircles } from './canvas'
 import get2DPositions from "../util/get2DPositions";
 import get3DPositions from "../util/get3DPositions";
 import { curUser } from "../LoginPage/LoginPage";
+import api from "../util/api";
 
 const detectorConfig = {
     runtime: 'mediapipe',
@@ -23,12 +24,22 @@ export default function ClientController() {
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [cameraRatio, setCameraRatio] = useState(-1)
     const [fps, setFps] = useState(0)
+    const [trainingPoses, setTrainingPoses] = useState(null)
     const canvasRef = useRef(null)
+    const singlePoseRef = useRef(null)
     const webcamRef = useRef(null)
     const clientWebcamRef = useRef(null)
     const [msg, sendMsg] = useWebsocket()
     const user = useContext(curUser)
     console.log(user)
+
+    async function getTrainingPoses(){
+        const response = await api.getTrainingPoses()
+            if (!response.error) {
+                setTrainingPoses(response)
+                return
+            }
+    }
 
     useEffect(() => {
         if (!webcamRef.current || cameraRatio < 0) {
@@ -37,6 +48,20 @@ export default function ClientController() {
         webcamRef.current.video.width = sampledVideoWidth
         webcamRef.current.video.height = sampledVideoWidth / cameraRatio
     }, [webcamRef.current, cameraRatio])
+
+    useEffect(() => {
+        if(!trainingPoses || !singlePoseRef || !singlePoseRef.current){
+            return
+        }
+
+        const ctx = singlePoseRef.current.getContext('2d')
+        const pose = get2DPositions(trainingPoses[0])
+        console.log(pose)
+        clearCanvas(ctx, singlePoseRef.current.width, singlePoseRef.current.height)
+        drawLines(ctx, pose)
+        drawCircles(ctx, pose)
+        
+    }, [trainingPoses, singlePoseRef.current])
 
     useEffect(() => {
         async function load() {
@@ -77,11 +102,12 @@ export default function ClientController() {
             const positions = poses[0]
             if (positions) {
                 const poses2D = get2DPositions(positions)
+                console.log("good", poses2D)
                 const poses3D = get3DPositions(positions)
                 const posAngles = calcAngles(poses3D)
                 const partsLengths = calcLengths(poses3D)
-                sendMsg(JSON.stringify({ pose: poses3D, posAngles, partsLengths, timestamp }))
-                recording.push(1)
+                // sendMsg(JSON.stringify({ pose: poses3D, posAngles, partsLengths, timestamp }))
+                // recording.push(1)
                 clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
                 drawLines(ctx, poses2D)
                 drawCircles(ctx, poses2D)
@@ -98,6 +124,7 @@ export default function ClientController() {
 
     async function startDrawing() {
         setIsRunning(true)
+        getTrainingPoses()
     }
 
     function stopDrawing() {
@@ -105,11 +132,15 @@ export default function ClientController() {
     }
 
     return (
-        <div style={{ position: "relative" }}>
+        <div style={{position: 'absolute', backgroundColor: 'white', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Button variant={'contained'} disabled={isRunning} style={{ position: "absolute", zIndex: 10, left: 15, top: 15}} onClick={() => startDrawing()}>
+                 Draw Skeleton
+            </Button>
+            <Button variant={'contained'} style={{ position: "absolute", zIndex: 10, right: 15, top: 15}} color="primary" onClick={stopDrawing}>Stop</Button>
             {cameraRatio > 0 ?
                 <Webcam
                     ref={webcamRef}
-                    style={{ zIndex: 0, position: "absolute", left: 0, top: 0 }}
+                    style={{ zIndex: -1, position: "absolute", left: 0, top: 0 }}
                     mirrored={true}
                     videoConstraints={{ facingMode: "user", width: sampledVideoWidth, height: sampledVideoWidth / cameraRatio, }}
                     width={250}
@@ -118,22 +149,25 @@ export default function ClientController() {
                 </Webcam> :
                 null
             }
-            <Webcam
-                ref={clientWebcamRef}
-                style={{ zIndex: 1, position: "absolute", left: 0, top: 0, width: '80vw', objectFit: 'contain' }}
-                mirrored={true}
-            >
-            </Webcam>
-            <Button variant={'contained'} disabled={isRunning} style={{ position: "absolute", zIndex: 10 }} onClick={() => startDrawing()}>
-                Draw Skeleton
-            </Button>
+            {cameraRatio > 0 ?
+                <Webcam
+                    ref={clientWebcamRef}
+                    style={{ zIndex: 1, width: 700, height: 700 / cameraRatio}}
+                    mirrored={true}
+                >
+                </Webcam>:
+                null
+            }
+            
             {clientWebcamRef.current ?
-                <canvas width={`${sampledVideoWidth}px`} height={`${sampledVideoWidth / cameraRatio}px`} ref={canvasRef} style={{ zIndex: 5, position: "absolute", left: 0, top: 0, width: clientWebcamRef.current.video.clientWidth, height: clientWebcamRef.current.video.clientHeight, objectFit: 'contain' }} />
+                    <canvas width={`${sampledVideoWidth}px`} height={`${sampledVideoWidth / cameraRatio}px`} ref={canvasRef} style={{ zIndex: 5, width: 700, height: 700 / cameraRatio, marginLeft: -700}} />
+                    
                 : null}
             {clientWebcamRef.current ?
-                <Button variant={'contained'} style={{ position: "absolute", left: clientWebcamRef.current.video.clientWidth - 71.47, top: 0, zIndex: 10 }} color="primary" onClick={stopDrawing}>Stop</Button>
+                   <canvas width={`${sampledVideoWidth}px`} height={`${sampledVideoWidth / cameraRatio}px`} ref={singlePoseRef} style={{ zIndex: 6, width: 700, height: 700 / cameraRatio, marginLeft: -700}} />
+                    
                 : null}
-            <h1 style={{ position: "absolute", left: 0, top: 50, zIndex: 10 }}>fps: {fps}</h1>
+
         </div>
     )
 }

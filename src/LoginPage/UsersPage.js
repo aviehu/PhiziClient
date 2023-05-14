@@ -7,7 +7,7 @@ import userLogo from "../person.png";
 import leftArrow from "../leftarrow.svg";
 
 function handleGoals(user) {
-
+    
 }
 
 function DisplayUsers(usersList) {

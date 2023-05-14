@@ -5,6 +5,8 @@ import PosesPage from "./LoginPage/PosesPage";
 import AdminPage from "./LoginPage/AdminPage";
 import UsersPage from "./LoginPage/UsersPage";
 import logo from './logo.jpeg';
+import AppBar from './components/AppBar'
+import Test from './components/Test'
 import {
     BrowserRouter as Router,
     Route,
@@ -15,17 +17,8 @@ import SessionPage from "./LoginPage/SessionPage";
 function App() {
 
     return (
-        <div>
-            <div style={{ position: 'absolute' }}>
-                <img style={{
-                    borderRadius: 50,
-                    height: 100,
-                    width: 100,
-                    marginLeft: 20,
-                    marginTop: 20
-                }} src={logo} alt="logo" />
-            </div>
-
+            
+        <AppBar>
             <Router>
                 <Routes>
                     <Route path="/" Component={LoginPage} />
@@ -37,7 +30,7 @@ function App() {
                     <Route path="/sessions" Component={SessionPage} />
                 </Routes>
             </Router>
-        </div>
+        </AppBar>
     );
 }
 
