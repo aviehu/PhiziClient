@@ -1,5 +1,5 @@
 import {useState,input, useEffect,useRef} from "react";
-import {Button,Paper, Stack, TextField,Typography,Slider} from "@mui/material";
+import {Button,Paper, Stack,TextField,InputLabel,Select, FormControl, OutlinedInput, MenuItem, Checkbox, ListItemText, Typography,Slider} from "@mui/material";
 import api from "../util/api";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
@@ -21,13 +21,31 @@ export default function AddPosePage() {
     const [image, setImage] = useState(null)
     const [resizedImage, setResizedImage] = useState(null)
     const [estimateTime, setEstimateTime] = useState(5);
-    const [minAge, setMinAge] = useState(0);
-    const [maxAge, setMaxAge] = useState(0);
+    const [goals, setGoals] = useState([]);
+    const [name, setName] = useState("");
     const imageRef = useRef()
     const resizedImageRef = useRef()
 
+    const ITEM_HEIGHT = 48
+    const ITEM_PADDING_TOP = 8
+
+    const goalsNames = ['Upper Body', 'Legs', 'Shoulders'];
+    const goalsNamesMatch = {'Upper Body': 'UPPER_BODY',
+                             'Legs': 'LEGS',
+                             'Shoulders': 'Shoulders'  }
+    const goalsProps = {
+        PaperProps: {
+          style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+          },
+        },
+      }
+
     async function handleAddPose() {
-        await api.sendPose({minAge, maxAge, estimateTime, ...fullPose})
+        const dataGoals = goals.map((goal) => goalsNamesMatch[goal])
+        console.log("datagoals:",dataGoals)
+        await api.sendPose({name: name, goals: dataGoals, keypoints: {...fullPose}})
     }
 
     useEffect(() => {
@@ -96,11 +114,17 @@ export default function AddPosePage() {
         return `${value} sec`;
     }
 
+    const handleGoalChange = (event) => {
+       const values = event.target.value
+       console.log(values)
+       setGoals(values)
+      }
+
     return (
         <div  style={{display: 'flex', position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center"}}>
             <Paper style={{padding:100, display: 'flex', justifyContent: "center", alignItems: "center"}}>
                 <Stack direction="column" spacing={3}>
-                    <Stack style={{textAlign: "center"}} direction="row" spacing={2}>
+                    {/* <Stack style={{textAlign: "center"}} direction="row" spacing={2}>
                         <Typography>
                             estimated Time:
                         </Typography>
@@ -115,15 +139,35 @@ export default function AddPosePage() {
                             valueLabelDisplay="auto"
 
                         />
+                    </Stack> */}
+                    <Stack style={{textAlign: "center"}} direction="column" spacing={2}>
+                        <TextField label="Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
+                        <FormControl sx={{ m: 1, width: 300 }}>
+                            <InputLabel id="demo-multiple-checkbox-label">Goals</InputLabel>
+                            <Select
+                            labelId="demo-multiple-checkbox-label"
+                            id="demo-multiple-checkbox"
+                            multiple
+                            value={goals}
+                            onChange={handleGoalChange}
+                            input={<OutlinedInput label="Goals" />}
+                            renderValue={(selected) => selected.join(', ')}
+                            MenuProps={goalsProps}
+                            >
+                            {goalsNames.map((goal) => (
+                                <MenuItem key={goal} value={goal}>
+                                    <Checkbox checked={goals.indexOf(goal) > -1} />
+                                <ListItemText primary={goal} />
+                                </MenuItem>
+                            ))}
+                            </Select>
+                        </FormControl>
                     </Stack>
-                    <TextField label="min age" value={minAge} onChange={(event) => setMinAge(event.target.value)}></TextField>
-                    <TextField label="max age" value={maxAge} onChange={(event) => setMaxAge(event.target.value)}></TextField>
                     <input type="file" multiple accept="image/*" onChange={onImageChange} />
                     {imageUrl? 
                         <img  hidden={false} src={imageUrl} style={{width: 250}}></img> : null
                     }
-                    
-                    <Button disabled={!fullPose || !estimateTime || !minAge || !maxAge} onClick={handleAddPose}>Add</Button>
+                    <Button disabled={!fullPose || !name || !goals} onClick={handleAddPose}>Add</Button>
                 </Stack>
             </Paper>
             {imageUrl? 
