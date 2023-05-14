@@ -12,6 +12,7 @@ import {
     Route,
     Routes
 } from "react-router-dom";
+import SessionPage from "./LoginPage/SessionPage";
 
 function App() {
 
@@ -26,7 +27,7 @@ function App() {
                     <Route path="/poses" Component={PosesPage} />
                     <Route path="/admin" Component={AdminPage} />
                     <Route path="/users" Component={UsersPage} />
-                    <Route path="/test" Component={Test} />
+                    <Route path="/sessions" Component={SessionPage} />
                 </Routes>
             </Router>
         </AppBar>

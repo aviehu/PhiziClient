@@ -1,6 +1,7 @@
 import joints from "../util/joints";
 import {LENGTH_PAIRS} from "../util/pairs";
-function dist(p1, p2) {
+
+export function dist(p1, p2) {
     if(p1 != null && p2!= null){
         return Math.sqrt(
             Math.pow(p1[0] - p2[0], 2) +
@@ -10,7 +11,7 @@ function dist(p1, p2) {
     return -1;
 }
 
-function findCoord(body, p) {
+export function findCoord(body, p) {
     try {
         const { x, y, z } = body.find((part) => part.part === p)
         return [x, y, z]
@@ -20,7 +21,7 @@ function findCoord(body, p) {
     }
 }
 
-function findAngle(p1, p2, p3) {
+export function findAngle(p1, p2, p3) {
     const ab = dist(p1, p2);
     const bc = dist(p2, p3);
     const ac = dist(p1, p3);
@@ -28,7 +29,7 @@ function findAngle(p1, p2, p3) {
     return Math.acos(angle) * (180 / Math.PI)
 }
 
-function calculateAngle(name, points) {
+export function calculateAngle(name, points) {
     if (!points[0] || !points[1] || !points[2]) {
         return -1;
     }

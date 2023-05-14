@@ -3,7 +3,7 @@ import {Button, Paper, Stack, TextField} from "@mui/material";
 import api from "../util/api";
 import { useNavigate } from "react-router-dom";
 
-export default function LoginPage() {
+export default function AdminPage() {
 
     // const [email, setEmail] = useState("")
     // const [password, setPassword] = useState("")
@@ -16,7 +16,7 @@ export default function LoginPage() {
     }
 
     function handleTrainings() {
-        navigate('/trainings')
+        navigate('/sessions')
     }
     function handleDisplayUsers() {
         navigate('/users')

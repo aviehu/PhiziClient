@@ -46,7 +46,7 @@ function DisplayUsers(usersList) {
     })
 };
 
-export default function LoginPage() {
+export default function UsersPage() {
 
     const [usersList, setUsersList] = useState([])
 
