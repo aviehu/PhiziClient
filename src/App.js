@@ -12,6 +12,7 @@ import {
     Routes
 } from "react-router-dom";
 import SessionPage from "./pages/SessionPage";
+import PoseFromWebcam from "./components/PoseFromWebcam";
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
                     <Route path="/admin" Component={AdminPage} />
                     <Route path="/users" Component={UsersPage} />
                     <Route path="/sessions" Component={SessionPage} />
+                    <Route path="/poses/webcam" Component={PoseFromWebcam} />
                 </Routes>
             </Router>
         </AppBar>
