@@ -1,12 +1,7 @@
-import {useState} from "react";
-import {Button, Paper, Stack, TextField} from "@mui/material";
-import api from "../util/api";
+import {Button, Paper, Stack} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminPage() {
-
-    // const [email, setEmail] = useState("")
-    // const [password, setPassword] = useState("")
 
     const navigate = useNavigate()
 

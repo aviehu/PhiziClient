@@ -1,4 +1,4 @@
-import { dist, calculateAngle, findAngle, findCoord, calcAngles, calcLengths } from '../components/calc'
+import { dist, calculateAngle, findAngle, findCoord, calcAngles, calcLengths } from '../util/calc'
 
 test('dist 1', () => {
     const p1 = [0, 0, 1]

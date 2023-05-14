@@ -1,18 +1,12 @@
 import {useState,input, useEffect,useRef} from "react";
-import {Button,Paper, Modal, ImageList, ImageListItem, Stack, TextField,Typography,Slider} from "@mui/material";
+import {Button,Paper, Stack, TextField,Typography,Slider} from "@mui/material";
 import api from "../util/api";
-import { useNavigate } from "react-router-dom";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
-import { calcLengths, calcAngles } from '../components/calc'
+import { calcLengths, calcAngles } from '../util/calc'
 import get3DPositions from "../util/get3DPositions";
-import {sampledVideoWidth} from "../util/envVars";
-import useWebsocket from "../components/useWebsocket";
-import {drawCircles, drawLines} from "../components/canvas";
 import get2DPositions from "../util/get2DPositions";
 import Resizer from "react-image-file-resizer";
-import getCameraRatio from "../util/getCameraRatio";
-import { reduceEachTrailingCommentRange } from "typescript";
 
 const detectorConfig = {
     runtime: 'mediapipe',
@@ -20,7 +14,7 @@ const detectorConfig = {
     solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/pose@${mpPose.VERSION}`
 };
 
-export default function PosesPage() {
+export default function AddPosePage() {
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [fullPose, setFullPose] = useState()
     const [imageUrl, setImageUrl] = useState(null)
@@ -32,20 +26,15 @@ export default function PosesPage() {
     const imageRef = useRef()
     const resizedImageRef = useRef()
 
-    const navigate = useNavigate()
-
     async function handleAddPose() {
         await api.sendPose({minAge, maxAge, estimateTime, ...fullPose})
-        console.log(fullPose)
     }
-
 
     useEffect(() => {
         async function load() {
             const model = poseDetection.SupportedModels.BlazePose;
             const detector = await poseDetection.createDetector(model, detectorConfig);
             setBlazePoseModel(detector)
-            console.log("ready for pose")
         }
         load()
     }, [])
@@ -64,8 +53,6 @@ export default function PosesPage() {
                     const poses2D = get2DPositions(positions)
                     const partsLengths = calcLengths(poses3D)
                     setFullPose({ pose: poses3D, posAngles ,partsLengths})
-
-                    console.log("positions: ",positions)
                 }
             }, 500)
         }
@@ -81,7 +68,6 @@ export default function PosesPage() {
         setTimeout(()=> {
             const ratio = imageRef.current.width / imageRef.current.height
             const h = 250/ratio
-            console.log("img", ratio)
             Resizer.imageFileResizer(
                 image,
                 250,
@@ -90,7 +76,6 @@ export default function PosesPage() {
                 100,
                 0,
                 (uri) => {
-                    console.log("uri: ", uri);
                     setResizedImage(URL.createObjectURL(uri))
                 },
                 "file",
@@ -102,10 +87,8 @@ export default function PosesPage() {
     },[imageUrl,imageRef.current,image])
 
     async function onImageChange(e){
-
         const img = e.target.files[0];
         setImage(img)
-        console.log(img)
         setImageUrl(URL.createObjectURL(img))
     }
 
@@ -113,7 +96,6 @@ export default function PosesPage() {
         return `${value} sec`;
     }
 
-    
     return (
         <div  style={{display: 'flex', position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center"}}>
             <Paper style={{padding:100, display: 'flex', justifyContent: "center", alignItems: "center"}}>

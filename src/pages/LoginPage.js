@@ -2,7 +2,6 @@ import { createContext, useState } from "react";
 import { Button, Paper, Stack, TextField } from "@mui/material";
 import api from "../util/api";
 import { useNavigate } from "react-router-dom";
-import { createUnarySpacing } from "@mui/system";
 
 export const curUser = createContext("batya")
 
@@ -47,6 +46,5 @@ export default function LoginPage() {
                 </Stack>
             </Paper>
         </div>
-
     )
 }

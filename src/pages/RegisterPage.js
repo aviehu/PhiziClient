@@ -54,11 +54,8 @@ export default function RegisterPage() {
                             valueLabelFormat={valueLabelFormat}
                             onChange={(event) => setHeight(event.target.value)}
                             valueLabelDisplay="auto"
-
-
                         />
                     </Stack>
-                    {/* <TextField label="Height" value={height} onChange={(event) => setHeight(event.target.value)}></TextField> */}
                     <Stack justifyContent={"space-between"} direction="row" spacing={3}>
                         <Button disabled={!name || !email || !password} onClick={handleRegister}>Register</Button>
                         <Button onClick={handleBack}>Back</Button>
