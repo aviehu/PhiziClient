@@ -14,6 +14,12 @@ const getRequest = function () {
     }
 };
 
+const deleteRequestOptions = function () {
+    return {
+        method: 'DELETE'
+    }
+};
+
 api.login = async function (body) {
     const requestOptions = postRequestOptions(body)
     const response = await fetch(`${serverUrl}/login`, requestOptions)
@@ -288,9 +294,9 @@ api.addSession = async function (body) {
     return await response.json()
 }
 
-api.deleteSession = async function (body) {
-    const requestOptions = postRequestOptions(body)
-    const response = await fetch(`${serverUrl}/sessions/deleteSession`, requestOptions)
+api.deleteSession = async function (id) {
+    const requestOptions = deleteRequestOptions()
+    const response = await fetch(`${serverUrl}/sessions/deleteSession/${id}`, requestOptions)
     return await response.json()
 }
 
