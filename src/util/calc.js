@@ -1,13 +1,14 @@
 import joints from "./joints";
-import {LENGTH_PAIRS} from "./pairs";
+import { LENGTH_PAIRS } from "./pairs";
 
 export function dist(p1, p2) {
-    if(p1 != null && p2!= null){
+    if (p1 != null && p2 != null) {
         return Math.sqrt(
             Math.pow(p1[0] - p2[0], 2) +
             Math.pow(p1[1] - p2[1], 2) +
             Math.pow(p1[2] - p2[2], 2)
-        )}
+        )
+    }
     return -1;
 }
 
@@ -51,7 +52,7 @@ export function calcLengths(positions) {
     const result = LENGTH_PAIRS.map((pair) => {
         const from = pair[0];
         const to = pair[1];
-        const length = dist(findCoord(positions,from), findCoord(positions,to))
+        const length = dist(findCoord(positions, from), findCoord(positions, to))
         return { from, to, length }
     })
     return result.filter((coord) => coord.length > 0)
