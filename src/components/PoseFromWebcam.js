@@ -3,10 +3,11 @@ import { sampledVideoWidth } from "../util/envVars";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
 import Webcam from "react-webcam";
-import {Button} from "@mui/material";
+import {Button, Stack} from "@mui/material";
 import getCameraRatio from "../util/getCameraRatio";
 import {clearCanvas, drawUserSkeleton} from '../util/canvas'
 import PoseMatchingCanvas from "./PoseMatchingCanvas";
+import Typography from "@mui/material/Typography";
 
 const detectorConfig = {
     runtime: 'mediapipe',
@@ -19,6 +20,7 @@ export default function PoseFromWebcam({setKeypoints, switchView}) {
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [cameraRatio, setCameraRatio] = useState(-1)
     const [screenShot, setScreenShot] = useState(null)
+    const [timer, setTimer] = useState(null)
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
     const clientWebcamRef = useRef(null)
@@ -74,16 +76,48 @@ export default function PoseFromWebcam({setKeypoints, switchView}) {
         setIsRunning(true)
     }
 
-    function stopDrawing() {
-        setIsRunning(false)
+    function takeScreenShot() {
+        let internalTime = 5
+        const interval = setInterval(() => {
+            setTimer(internalTime)
+            internalTime --
+        }, 1000)
+        setTimeout(() => {
+            clearInterval(interval)
+            setTimer(null)
+            setIsRunning(false)
+        }, 6000)
     }
 
     return (
-        <div style={{position: 'absolute', backgroundColor: 'white', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Button variant={'contained'} disabled={isRunning} style={{ position: "absolute", zIndex: 10, left: 15, top: 15}} onClick={() => startDrawing()}>
-                Draw Skeleton
-            </Button>
-            <Button disabled={!isRunning || screenShot} variant={'contained'} style={{ position: "absolute", zIndex: 10, right: 15, top: 15}} color="primary" onClick={stopDrawing}>Take Picture</Button>
+        <div 
+            style={{
+                position: 'absolute',
+                backgroundColor: 'white',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'}}
+        >
+            <Stack direction='row' justifyContent="space-between" style={{position:"absolute", top: 20, left:20, right: 20}}>
+                <Button
+                    variant={'contained'}
+                    disabled={isRunning}
+                    onClick={() => startDrawing()}
+                >
+                    Draw Skeleton
+                </Button>
+                { timer ? <Typography> {timer} </Typography> : null }
+                <Button
+                    disabled={!isRunning || screenShot}
+                    variant={'contained'}
+                    color="primary"
+                    onClick={takeScreenShot}
+                >
+                    Take Picture
+                </Button>
+            </Stack>
             <Webcam
                 ref={webcamRef}
                 style={{ zIndex: -1, position: "absolute", left: 0, top: 0 }}

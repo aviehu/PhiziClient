@@ -39,7 +39,6 @@ export default function AddPoseForm({setGoals, setName, setKeypoints, name, goal
         },
       }
 
-      console.log(goals)
     useEffect(() => {
         async function load() {
             const model = poseDetection.SupportedModels.BlazePose;
@@ -58,6 +57,7 @@ export default function AddPoseForm({setGoals, setName, setKeypoints, name, goal
                 const poses = await blazePoseModel.estimatePoses(resizedImageRef.current, estimationConfig, timestamp);
                 const positions = poses[0]
                 if(positions) {
+                    console.log("postions",positions)
                     const poses3D = get3DPositions(positions)
                     const posAngles = calcAngles(poses3D)
                     const poses2D = get2DPositions(positions)
