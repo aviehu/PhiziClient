@@ -39,7 +39,6 @@ export default function LoginPage() {
                     </curUser.Provider>
                     <TextField type={"password"} label="Password" value={password} onChange={(event) => setPassword(event.target.value)}></TextField>
                     <Stack justifyContent={"space-between"} direction="row" spacing={3}>
-                        <Button disabled={!email || !password} onClick={handleLogin}>Login</Button>
                         <Button onClick={handleRegister}>Register</Button>
                         <Button onClick={handleAdmin}>Im admin</Button>
                     </Stack>
