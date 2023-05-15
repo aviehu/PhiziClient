@@ -77,7 +77,7 @@ export default function AppPage() {
             const timestamp = performance.now();
             const poses = await blazePoseModel.estimatePoses(video, estimationConfig, timestamp);
             drawUserSkeleton(ctx, poses[0], canvasRef)
-            isMatching(trainingPoses, poses)
+            // isMatching(trainingPoses, poses)
             setTimeout(draw, 0)
         }
         draw()
