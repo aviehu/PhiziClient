@@ -1,0 +1,1 @@
+export default ['Upper Body', 'Legs', 'Shoulders'];

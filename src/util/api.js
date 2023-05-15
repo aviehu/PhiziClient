@@ -8,7 +8,7 @@ const postRequestOptions = function (body) {
         body: JSON.stringify(body)
     }
 };
-const getRequest = function () {
+const getRequestOptions = function () {
     return {
         method: 'GET'
     }
@@ -41,13 +41,13 @@ api.register = async function (body) {
 }
 
 api.getAllUsers = async function () {
-    const requestOptions = getRequest()
+    const requestOptions = getRequestOptions()
     const response = await fetch(`${serverUrl}/users/getAllUsers`, requestOptions)
     return await response.json()
 }
 
 api.getUser = async function (email) {
-    const requestOptions = getRequest()
+    const requestOptions = getRequestOptions()
     const response = await fetch(`${serverUrl}/users/getUser/${email}`, requestOptions)
     return await response.json()
 }
@@ -62,7 +62,7 @@ api.updateUser = async function (body) {
 // Sessions API
 
 api.getAllSessions = async function () {
-    const requestOptions = getRequest()
+    const requestOptions = getRequestOptions()
     const response = await fetch(`${serverUrl}/sessions/getAllSessions`, requestOptions)
     return await response.json()
 }
@@ -79,9 +79,9 @@ api.deleteSession = async function (id) {
     return await response.json()
 }
 
-api.getSession = async function (body) {
-    const requestOptions = postRequestOptions(body)
-    const response = await fetch(`${serverUrl}/sessions/getSession`, requestOptions)
+api.getSession = async function (name) {
+    const requestOptions = getRequestOptions()
+    const response = await fetch(`${serverUrl}/sessions/getSession/${name}`, requestOptions)
     return await response.json()
 }
 
@@ -91,11 +91,17 @@ api.updateSession = async function (body) {
     return await response.json()
 }
 
+api.getSessionForUser = async function (goals) {
+    const requestOptions = postRequestOptions({goals})
+    const response = await fetch(`${serverUrl}/sessions/getSessionForUser`, requestOptions)
+    return await response.json()
+}
+
 
 // Poses API
 
 api.getAllPoses = async function () {
-    const requestOptions = getRequest()
+    const requestOptions = getRequestOptions()
     const response = await fetch(`${serverUrl}/poses/getAllPoses`, requestOptions)
     return await response.json()
 }
@@ -121,6 +127,12 @@ api.getPose = async function (body) {
 api.updatePose = async function (body) {
     const requestOptions = postRequestOptions(body)
     const response = await fetch(`${serverUrl}/poses/updatePose`, requestOptions)
+    return await response.json()
+}
+
+api.getPosesByGoals = async function (body) {
+    const requestOptions = postRequestOptions(body)
+    const response = await fetch(`${serverUrl}/poses/getPosesByGoals`, requestOptions)
     return await response.json()
 }
 

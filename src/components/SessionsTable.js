@@ -11,6 +11,7 @@ export default function SessionsTable({ sessions, handleDelete }) {
                         <TableCell>Name</TableCell>
                         <TableCell>Description</TableCell>
                         <TableCell>Difficulty</TableCell>
+                        <TableCell>Goals</TableCell>
                         <TableCell></TableCell>
                     </TableRow>
                 </TableHead>
@@ -20,6 +21,7 @@ export default function SessionsTable({ sessions, handleDelete }) {
                             <TableCell>{session.name}</TableCell>
                             <TableCell>{session.description}</TableCell>
                             <TableCell>{session.difficulty}</TableCell>
+                            <TableCell>{session.goals}</TableCell>
                             <TableCell>
                                 <Stack direction={'row'} spacing={4}>
                                     <Button variant={'contained'} endIcon={<EditIcon/>}> Edit </Button>

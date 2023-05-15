@@ -1,13 +1,11 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { sampledVideoWidth } from "../util/envVars";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
 import Webcam from "react-webcam";
 import { Button } from "@mui/material";
 import getCameraRatio from "../util/getCameraRatio";
-import { clearCanvas, drawLines, drawCircles, drawUserSkeleton } from '../util/canvas'
-import get2DPositions from "../util/get2DPositions";
-import { curUser } from "./LoginPage";
+import { clearCanvas, drawUserSkeleton } from '../util/canvas'
 import api from "../util/api";
 import PoseMatchingCanvas from "../components/PoseMatchingCanvas";
 import isMatching from "../poseMatching/poseMatching";
@@ -23,21 +21,17 @@ export default function AppPage() {
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [cameraRatio, setCameraRatio] = useState(-1)
     const [trainingPoses, setTrainingPoses] = useState(null)
-    const [fps, setFps] = useState(0)
-
     const canvasRef = useRef(null)
-    const singlePoseRef = useRef(null)
     const webcamRef = useRef(null)
     const clientWebcamRef = useRef(null)
-    const user = useContext(curUser)
-    console.log(user)
 
     async function getTrainingPoses() {
-        const response = await api.getTrainingPoses()
-        if (!response.error) {
-            setTrainingPoses(response[0])
+        const response = await api.getSessionForUser(['Legs', 'Upper Body', 'Shoulders'])
+        if (response.error) {
             return
         }
+        setTrainingPoses(response.sessionPoses[0].keypoints)
+        console.log('session', response.sessionPoses[0].keypoints)
     }
 
     useEffect(() => {
@@ -55,7 +49,7 @@ export default function AppPage() {
             setBlazePoseModel(detector)
             const cameraRatio = await getCameraRatio()
             setCameraRatio(cameraRatio)
-            console.log("ready")
+            getTrainingPoses()
         }
         load()
     }, [])
@@ -69,7 +63,6 @@ export default function AppPage() {
             const ctx = canvasRef.current.getContext('2d')
             if (!internallIsRunning) {
                 clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
-                setFps(0)
                 return
             }
             const video = webcamRef.current.video;
@@ -77,9 +70,9 @@ export default function AppPage() {
             const timestamp = performance.now();
             const poses = await blazePoseModel.estimatePoses(video, estimationConfig, timestamp);
             drawUserSkeleton(ctx, poses[0], canvasRef)
-            if (trainingPoses && poses) {
-                isMatching(trainingPoses, poses)
-            }
+            // if (trainingPoses && poses) {
+            //     isMatching(trainingPoses, poses)
+            // }
             setTimeout(draw, 0)
         }
         draw()
@@ -90,7 +83,6 @@ export default function AppPage() {
 
     async function startDrawing() {
         setIsRunning(true)
-        getTrainingPoses()
     }
 
     function stopDrawing() {
@@ -129,7 +121,7 @@ export default function AppPage() {
                     style={{ zIndex: 5, width: 800, height: 800 / cameraRatio, marginLeft: -800 }}
                 />
                 : null}
-            {clientWebcamRef.current ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses} /> : null}
+            {clientWebcamRef.current && trainingPoses ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses} /> : null}
         </div>
     )
 }

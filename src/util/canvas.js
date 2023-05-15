@@ -44,9 +44,8 @@ export function drawUserSkeleton(ctx, positions, canvasRef) {
 
 export function drawWantedPoseSkeleton(ctx, positions, canvasRef) {
     if (positions) {
-        const poses2D = get2DPositions(positions)
         clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
-        drawLines(ctx, poses2D, "rgb(255,0,127)")
-        drawCircles(ctx, poses2D)
+        drawLines(ctx, positions, "rgb(255,0,127)")
+        drawCircles(ctx, positions)
     }
 }
