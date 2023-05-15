@@ -25,7 +25,7 @@ export default function SessionPage() {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding:50}}>
             {
                 sessions ?
-                    <SessionsTable sessions={sessions} handleDelete={handleDelete()}/> :
+                    <SessionsTable sessions={sessions} handleDelete={handleDelete}/> :
                     <CircularProgress />
             }
         </div>
