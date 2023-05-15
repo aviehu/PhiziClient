@@ -15,5 +15,5 @@ export default {
     leftKnee: 'rgb(107,98,51)',
     rightKnee: 'rgb(107,98,51)',
     leftAnkle: 'rgb(234,140,140)',
-    rightAnkle:'rgb(234,140,140)'
+    rightAnkle: 'rgb(234,140,140)'
 }
