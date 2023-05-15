@@ -19,7 +19,12 @@ const deleteRequestOptions = function () {
         method: 'DELETE'
     }
 };
-
+api.editUserGoals = async function(req){
+    console.log("req",req)
+    const requestOptions = postRequestOptions(req)
+    const response = await fetch(`${serverUrl}/editUserGoals`, requestOptions)
+    return await response.json()
+}
 api.login = async function (body) {
     const requestOptions = postRequestOptions(body)
     const response = await fetch(`${serverUrl}/login`, requestOptions)
