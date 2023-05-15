@@ -5,7 +5,7 @@ import * as mpPose from "@mediapipe/pose";
 import Webcam from "react-webcam";
 import { Button } from "@mui/material";
 import getCameraRatio from "../util/getCameraRatio";
-import { clearCanvas, drawLines, drawCircles, drawUserSkeleton, drawWantedPoseSkeleton } from '../util/canvas'
+import { clearCanvas, drawLines, drawCircles, drawUserSkeleton } from '../util/canvas'
 import get2DPositions from "../util/get2DPositions";
 import { curUser } from "./LoginPage";
 import api from "../util/api";
@@ -76,7 +76,7 @@ export default function AppPage() {
             const estimationConfig = { flipHorizontal: false };
             const timestamp = performance.now();
             const poses = await blazePoseModel.estimatePoses(video, estimationConfig, timestamp);
-            drawWantedPoseSkeleton(ctx, poses[0], canvasRef)
+            drawUserSkeleton(ctx, poses[0], canvasRef)
             isMatching(trainingPoses, poses)
             setTimeout(draw, 0)
         }
