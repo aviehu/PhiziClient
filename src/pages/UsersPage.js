@@ -1,5 +1,6 @@
+
 import { useState, useEffect} from "react";
-import { Divider, ListItemText, List,ListItem,ListItemSecondaryAction,Stack, Paper, FormControl, OutlinedInput,MenuItem, Checkbox, InputLabel, Select, Avatar, ListItemAvatar, Button } from "@mui/material";
+import { Divider, ListItemText, List,ListItem,Stack, Paper, FormControl, OutlinedInput,MenuItem, Checkbox, InputLabel, Select, Avatar, ListItemAvatar, Button } from "@mui/material";
 import api from "../util/api";
 import userLogo from "../person.png";
 
@@ -8,9 +9,6 @@ const ITEM_HEIGHT = 48
     const ITEM_PADDING_TOP = 8
 
     const goalsNames = ['Upper Body', 'Legs', 'Shoulders'];
-    const goalsNamesMatch = {'Upper Body': 'UPPER_BODY',
-                             'Legs': 'LEGS',
-                             'Shoulders': 'Shoulders'  }
     const goalsProps = {
         PaperProps: {
           style: {
@@ -19,18 +17,13 @@ const ITEM_HEIGHT = 48
           },
         },
       }
-    //   const handleGoalChange = async (event,email) => {
-    //     const values = event.target.value
-        
-    //     return values
-    // }
 
 function DisplayUsers({usersList, handleGoals}) {
         return (
             <Stack direction="column" spacing={3} style={{ justifyContent: "center", alignItems: "center"}}>
                 {usersList? usersList.map((user) => { 
                 return(
-                <Paper key={user.name} spacing={3} direction="column" style={{position: "absolute",display: 'flex', justifyContent: "center", alignItems: "center"}}>
+                <Paper key={user.name} spacing={3} direction="column" style={{justifyContent: "center", alignItems: "center"}}>
                     <List direction = "column" style={{ justifyItems:"center"}}>
                         <ListItem>
                             <Stack direction="row" spacing={3}>
@@ -63,7 +56,7 @@ function DisplayUsers({usersList, handleGoals}) {
                                                 id="demo-multiple-checkbox"
                                                 multiple
                                                 value={user.goals}
-                                                onChange={(event) => handleGoals(event.target.value,user._id) }
+                                                onChange={(event) => handleGoals(event.target.value,user.email) }
                                                 input={<OutlinedInput label="Goals" />}
                                                 renderValue={(selected) => selected.join(', ')}
                                                 MenuProps={goalsProps}
@@ -89,7 +82,6 @@ function DisplayUsers({usersList, handleGoals}) {
 
 export default function UsersPage() {
     const [usersList, setUsersList] = useState([])
-    // const [goals, setGoals] = useState([]);
     
     async function load() {
         const response = await api.getAllUsers()
@@ -108,13 +100,10 @@ export default function UsersPage() {
         load()
     }, [])    
     
-    async function handleGoals(goals,id) {
-        // await api.editUserGoals({email: email , goals: goals})
-        // const newgoals = event.target.value
-        const req = {id , goals}
-        const res = await api.editUserGoals(req)
+    async function handleGoals(goals,email) {
+        const body = {email , goals}
+        const res = await api.updateUser(body)
         if(!res.error){
-            console.log("response: ", res)
             load()
         }
     }
@@ -122,10 +111,7 @@ export default function UsersPage() {
 
     return (
         <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
-            {/* <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}> */}
-            
                 {usersList ? <DisplayUsers usersList={usersList} handleGoals={handleGoals} /> : []}
-            {/* </List> */}
         </div>
     )
 }
