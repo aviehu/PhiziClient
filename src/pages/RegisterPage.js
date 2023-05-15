@@ -36,11 +36,11 @@ export default function RegisterPage() {
             <Paper style={{ display: "flex", height: "80%", width: "60%", justifyContent: "center", alignItems: "center" }}>
                 <Stack style={{ textAlign: "center" }} direction="column" spacing={3}>
                     <h1 style={{ paddingBottom: 4 }}>Register</h1>
-                    <TextField label="Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
-                    <TextField label="Email" value={email} onChange={(event) => setEmail(event.target.value)}></TextField>
-                    <TextField type={"password"} label="Password" value={password} onChange={(event) => setPassword(event.target.value)}></TextField>
-                    <TextField label="Age" value={age} onChange={(event) => setAge(event.target.value)}></TextField>
-                    <TextField label="Weight" value={weight} onChange={(event) => setWeight(event.target.value)}></TextField>
+                    <TextField key="Name" label="Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
+                    <TextField key="Email" label="Email" value={email} onChange={(event) => setEmail(event.target.value)}></TextField>
+                    <TextField key="password" type={"password"} label="Password" value={password} onChange={(event) => setPassword(event.target.value)}></TextField>
+                    <TextField key="age" label="Age" value={age} onChange={(event) => setAge(event.target.value)}></TextField>
+                    <TextField key="weight" label="Weight" value={weight} onChange={(event) => setWeight(event.target.value)}></TextField>
                     <Stack style={{ textAlign: "center" }} direction="row" spacing={2}>
                         <Typography>
                             Height:
