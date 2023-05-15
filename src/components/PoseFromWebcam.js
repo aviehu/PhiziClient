@@ -8,6 +8,7 @@ import getCameraRatio from "../util/getCameraRatio";
 import {clearCanvas, drawUserSkeleton} from '../util/canvas'
 import PoseMatchingCanvas from "./PoseMatchingCanvas";
 import Typography from "@mui/material/Typography";
+import get3DPositions from "../util/get3DPositions";
 
 const detectorConfig = {
     runtime: 'mediapipe',
@@ -147,7 +148,7 @@ export default function PoseFromWebcam({setKeypoints, switchView}) {
             { screenShot ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={screenShot}/> : null }
             { screenShot ?
                 <Button variant={'contained'} style={{ position: 'absolute', right: 30, bottom: 80 }} onClick={() => {
-                    setKeypoints(screenShot)
+                    setKeypoints(get3DPositions(screenShot))
                     switchView()
                 }}>
                     Accept
