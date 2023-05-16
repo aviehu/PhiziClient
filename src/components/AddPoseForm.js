@@ -1,5 +1,20 @@
 import { useState, input, useEffect, useRef } from "react";
-import { Button, Paper, Stack, TextField, InputLabel, Select, FormControl, OutlinedInput, MenuItem, Checkbox, ListItemText, Typography, Slider } from "@mui/material";
+import {
+    Button,
+    Paper,
+    Stack,
+    TextField,
+    InputLabel,
+    Select,
+    FormControl,
+    OutlinedInput,
+    MenuItem,
+    Checkbox,
+    ListItemText,
+    Typography,
+    Slider,
+    Snackbar, Slide, Alert
+} from "@mui/material";
 import api from "../util/api";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
@@ -19,7 +34,7 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
     const [imageUrl, setImageUrl] = useState(null)
     const [image, setImage] = useState(null)
     const [resizedImage, setResizedImage] = useState(null)
-    const [estimateTime, setEstimateTime] = useState(5);
+    const [openSnackBar, setOpenSnackBar] = useState(false)
     const imageRef = useRef()
     const resizedImageRef = useRef()
 
@@ -114,26 +129,26 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
         setGoals(values)
     }
 
+    function TransitionRight(props) {
+        return <Slide {...props} direction="right" />;
+    }
+
     return (
         <div style={{ display: 'flex', position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
+            <Snackbar
+                autoHideDuration={4000}
+                open={openSnackBar}
+                onClose={() => {setOpenSnackBar(false)}}
+                TransitionComponent={TransitionRight}
+                key={'snackBar'}
+
+            >
+                <Alert onClose={() => setOpenSnackBar(false)} severity="success" sx={{ width: '100%' }}>
+                    Pose added successfully
+                </Alert>
+            </Snackbar>
             <Paper style={{ padding: 100, display: 'flex', justifyContent: "center", alignItems: "center" }}>
                 <Stack direction="column" spacing={3}>
-                    {/* <Stack style={{textAlign: "center"}} direction="row" spacing={2}>
-                        <Typography>
-                            estimated Time:
-                        </Typography>
-                        <Slider
-                            value={estimateTime}
-                            min={5}
-                            step={1}
-                            max={55}
-                            getAriaValueText={valueLabelFormat}
-                            valueLabelFormat={valueLabelFormat}
-                            onChange={(event) => setEstimateTime(event.target.value)}
-                            valueLabelDisplay="auto"
-
-                        />
-                    </Stack> */}
                     <Stack style={{ textAlign: "center" }} direction="column" spacing={2}>
                         <TextField label="Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
                         <FormControl sx={{ m: 1, width: 300 }}>
@@ -162,7 +177,10 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
                         <img hidden={false} src={imageUrl} style={{ width: 250 }}></img> : null
                     }
                     <Button onClick={switchView}>Take a Picture</Button>
-                    <Button disabled={!name || !goals} onClick={submitForm}>Add</Button>
+                    <Button disabled={!name || !goals} onClick={() => {
+                        setOpenSnackBar(true)
+                        submitForm()
+                    }}>Add</Button>
                 </Stack>
             </Paper>
             {imageUrl ?
