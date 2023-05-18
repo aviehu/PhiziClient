@@ -87,7 +87,7 @@ api.getSession = async function (name) {
 
 api.updateSession = async function (body) {
     const requestOptions = postRequestOptions(body)
-    const response = await fetch(`${serverUrl}/sessions/updateSession`, requestOptions)
+    const response = await fetch(`${serverUrl}/sessions/updateSession/${body.name}`, requestOptions)
     return await response.json()
 }
 
