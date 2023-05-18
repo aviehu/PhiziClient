@@ -2,18 +2,18 @@ import { useContext, useState } from "react";
 import { Button, Paper, Stack, TextField } from "@mui/material";
 import api from "../util/api";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../hooks/UserProvider";
+import UserContext from "../context/UserContext";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const {setUser} = useContext(UserContext)
+    const { setUser } = useContext(UserContext)
     const navigate = useNavigate()
 
     async function handleLogin() {
         const response = await api.login({ email, password })
         if (!response.error) {
-            setUser(email)
+            setUser(response)
             navigate('/app')
             return
         }

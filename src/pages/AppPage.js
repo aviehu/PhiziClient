@@ -9,7 +9,7 @@ import { clearCanvas, drawUserSkeleton } from '../util/canvas'
 import api from "../util/api";
 import PoseMatchingCanvas from "../components/PoseMatchingCanvas";
 import isMatching from "../poseMatching/poseMatching";
-import useUser, { UserContext } from "../hooks/UserProvider";
+import UserContext from "../context/UserContext";
 
 const detectorConfig = {
     runtime: 'mediapipe',
@@ -25,7 +25,7 @@ export default function AppPage() {
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
     const clientWebcamRef = useRef(null)
-    const {user} = useContext(UserContext)
+    const { user } = useContext(UserContext)
 
 
     async function getTrainingPoses() {
