@@ -2,7 +2,7 @@ import {Button, Paper, Stack, Table, TableBody, TableCell, TableContainer, Table
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-export default function SessionsTable({ sessions, handleDelete }) {
+export default function SessionsTable({ sessions, handleDelete, setEditSession }) {
     return (
         <TableContainer component={Paper}>
             <Table>
@@ -24,7 +24,9 @@ export default function SessionsTable({ sessions, handleDelete }) {
                             <TableCell>{session.goals}</TableCell>
                             <TableCell>
                                 <Stack direction={'row'} spacing={4}>
-                                    <Button variant={'contained'} endIcon={<EditIcon/>}> Edit </Button>
+                                    <Button variant={'contained'} endIcon={<EditIcon/>} onClick={() => {
+                                        setEditSession(session)
+                                    }}> Edit </Button>
                                     <Button variant={'contained'} endIcon={<DeleteIcon/>} onClick={() => {
                                         handleDelete(session._id)
                                     }}> Delete </Button>

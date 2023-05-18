@@ -6,7 +6,7 @@ import Webcam from "react-webcam";
 import {Button, Stack} from "@mui/material";
 import getCameraRatio from "../util/getCameraRatio";
 import {clearCanvas, drawUserSkeleton} from '../util/canvas'
-import PoseMatchingCanvas from "./PoseMatchingCanvas";
+import AddPoseCanvas from "./AddPoseCanvas";
 import Typography from "@mui/material/Typography";
 import get3DPositions from "../util/get3DPositions";
 import get2DPositions from "../util/get2DPositions";
@@ -146,7 +146,7 @@ export default function PoseFromWebcam({setKeypoints, switchView}) {
                     style={{ zIndex: 5, width: 800, height: 800 / cameraRatio, marginLeft: -800}}
                 />
                 : null}
-            { screenShot ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={get2DPositions(screenShot)}/> : null }
+            { screenShot ? <AddPoseCanvas cameraRatio={cameraRatio} targetPose={get2DPositions(screenShot)}/> : null }
             { screenShot ?
                 <Button variant={'contained'} style={{ position: 'absolute', right: 30, bottom: 80 }} onClick={() => {
                     setKeypoints({keypoints3D: get3DPositions(screenShot), keypoints: get2DPositions(screenShot)})
