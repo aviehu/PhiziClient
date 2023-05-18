@@ -3,6 +3,7 @@ import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import UsersPage from "./pages/UsersPage";
 import AppBar from './components/PhiziAppBar'
+import UserProvider from './hooks/UserProvider'
 
 import {
     BrowserRouter as Router,
@@ -16,16 +17,18 @@ function App() {
 
     return (
         <Router>
-            <AppBar>
-                <Routes>
-                    <Route path="/" Component={LoginPage} />
-                    <Route path="/app" Component={AppPage} />
-                    <Route path="/register" Component={RegisterPage} />
-                    <Route path="/poses" Component={AddPosePage} />
-                    <Route path="/users" Component={UsersPage} />
-                    <Route path="/sessions" Component={SessionPage} />
-                </Routes>
-            </AppBar>
+            <UserProvider>
+                <AppBar>
+                    <Routes>
+                        <Route path="/" Component={LoginPage} />
+                        <Route path="/app" Component={AppPage} />
+                        <Route path="/register" Component={RegisterPage} />
+                        <Route path="/poses" Component={AddPosePage} />
+                        <Route path="/users" Component={UsersPage} />
+                        <Route path="/sessions" Component={SessionPage} />
+                    </Routes>
+                </AppBar>
+            </UserProvider>
         </Router>
     );
 }

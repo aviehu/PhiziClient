@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useLocation, useEffect, useRef, useState, useContext } from "react";
 import { sampledVideoWidth } from "../util/envVars";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
@@ -9,6 +9,7 @@ import { clearCanvas, drawUserSkeleton } from '../util/canvas'
 import api from "../util/api";
 import PoseMatchingCanvas from "../components/PoseMatchingCanvas";
 import isMatching from "../poseMatching/poseMatching";
+import useUser, { UserContext } from "../hooks/UserProvider";
 
 const detectorConfig = {
     runtime: 'mediapipe',
@@ -24,6 +25,8 @@ export default function AppPage() {
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
     const clientWebcamRef = useRef(null)
+    const {user} = useContext(UserContext)
+
 
     async function getTrainingPoses() {
         const response = await api.getSessionForUser(['Legs', 'Upper Body', 'Shoulders'])
