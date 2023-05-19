@@ -1,7 +1,6 @@
-import { useContext } from "react-router-dom";
-import { useState, createContext } from "react";
+import UserContext from "../context/UserContext";
+import { useState } from "react";
 
-export const UserContext = createContext({user: "", setUser: (user) => {}})
 export default function UserProvider({children}){
     const [user,setUser] = useState("hila")
     return(
@@ -9,6 +8,4 @@ export default function UserProvider({children}){
             {children}
         </UserContext.Provider>
     )
-
-
 }
