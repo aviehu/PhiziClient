@@ -1,12 +1,10 @@
-
 import { useState, useEffect} from "react";
-import { Divider, ListItemText, List,ListItem,Stack, Paper, FormControl, OutlinedInput,MenuItem, Checkbox, InputLabel, Select, Avatar, ListItemAvatar, Button } from "@mui/material";
 import api from "../util/api";
-import userLogo from "../person.png";
+import UsersTable from "../components/UsersTable"
 
 
 const ITEM_HEIGHT = 48
-    const ITEM_PADDING_TOP = 8
+const ITEM_PADDING_TOP = 8
 
     const goalsNames = ['Upper Body', 'Legs', 'Shoulders'];
     const goalsProps = {
@@ -17,68 +15,6 @@ const ITEM_HEIGHT = 48
           },
         },
       }
-
-function DisplayUsers({usersList, handleGoals}) {
-        return (
-            <Stack direction="column" spacing={3} style={{ justifyContent: "center", alignItems: "center"}}>
-                {usersList? usersList.map((user) => { 
-                return(
-                <Paper key={user.name} spacing={3} direction="column" style={{justifyContent: "center", alignItems: "center"}}>
-                    <List direction = "column" style={{ justifyItems:"center"}}>
-                        <ListItem>
-                            <Stack direction="row" spacing={3}>
-                                <ListItemAvatar>
-                                    <Avatar alt="Remy Sharp" src={userLogo} />
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary="Name: "
-                                    secondary = {user.name}/>
-                                <ListItemText
-                                    primary="Age: "
-                                    secondary = {user.age}/>
-                                <ListItemText
-                                    primary="Weight: "
-                                    secondary = {user.weight}/>
-                                <ListItemText
-                                    primary="Height: "
-                                    secondary = {user.height}/>
-                                <ListItemText
-                                    primary="BMI: "
-                                    secondary = {Number(user.bmi).toFixed(2)}/>
-                                </Stack>
-                            </ListItem>
-                            
-                            <ListItem>
-                                <FormControl sx={{ m: 1, width: 300 }} >
-                                                <InputLabel id="demo-multiple-checkbox-label">Goals</InputLabel>
-                                                <Select
-                                                labelId="demo-multiple-checkbox-label"
-                                                id="demo-multiple-checkbox"
-                                                multiple
-                                                value={user.goals}
-                                                onChange={(event) => handleGoals(event.target.value,user.email) }
-                                                input={<OutlinedInput label="Goals" />}
-                                                renderValue={(selected) => selected.join(', ')}
-                                                MenuProps={goalsProps}
-                                                >
-                                                console.log("mygoals!",goals)
-                                                {goalsNames.map((goal) => (
-                                                    <MenuItem key={goal} value={goal}>
-                                                        <Checkbox checked={user.goals.indexOf(goal) > -1} />
-                                                    <ListItemText primary={goal} />
-                                                    </MenuItem>
-                                                ))}
-                                                </Select>
-                                </FormControl>
-                            </ListItem>
-                    </List>
-                </Paper> 
-                )}) : null}    
-            </Stack> 
-        )                                      
-};
-
-
 
 export default function UsersPage() {
     const [usersList, setUsersList] = useState([])
@@ -110,8 +46,8 @@ export default function UsersPage() {
     
 
     return (
-        <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                {usersList ? <DisplayUsers usersList={usersList} handleGoals={handleGoals} /> : []}
+        <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%", alignContent:'center', justifyContent: "center", alignItems: "center" }}>
+                {usersList ? <UsersTable usersList={usersList} handleGoals={handleGoals} goalsProps = {goalsProps} goalsNames={goalsNames} /> : []}
         </div>
     )
 }

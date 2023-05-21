@@ -47,7 +47,7 @@ export default function SessionPage() {
                     null
             }
             {
-                sessions ?
+                sessions?
                     <SessionsTable sessions={sessions} handleDelete={handleDelete} setEditSession={setEditSession}/> :
                     <CircularProgress />
             }

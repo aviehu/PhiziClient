@@ -1,9 +1,9 @@
-import { useLocation, useEffect, useRef, useState, useContext } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import { sampledVideoWidth } from "../util/envVars";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
 import Webcam from "react-webcam";
-import { Button } from "@mui/material";
+import { Button} from "@mui/material";
 import getCameraRatio from "../util/getCameraRatio";
 import { clearCanvas, drawUserSkeleton } from '../util/canvas'
 import api from "../util/api";
@@ -25,7 +25,8 @@ export default function AppPage() {
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
     const clientWebcamRef = useRef(null)
-    const { user } = useContext(UserContext)
+    const { getUser } = useContext(UserContext)
+    const user = getUser()
 
 
     async function getTrainingPoses() {
@@ -93,7 +94,7 @@ export default function AppPage() {
     }
 
     return (
-        <div style={{ position: 'absolute', backgroundColor: 'white', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'absolute', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Button variant={'contained'} disabled={isRunning} style={{ position: "absolute", zIndex: 10, left: 15, top: 15 }} onClick={() => startDrawing()}>
                 Draw Skeleton
             </Button>
@@ -108,13 +109,14 @@ export default function AppPage() {
             >
             </Webcam>
             {cameraRatio > 0 ?
+                // <Paper variant='elevation' elevation={10} style={{borderRadius:'5%', opacity:'90%', display: "flex", height: "60%", width: "50%", justifyContent: "center", alignItems: "center" }}>
                 <Webcam
                     ref={clientWebcamRef}
-                    style={{ zIndex: 1, width: 800, height: 800 / cameraRatio }}
+                    style={{ borderRadius:'1%',zIndex: 1, width: 800, height: 800 / cameraRatio }}
                     mirrored={true}
                 >
-                </Webcam> :
-                null
+                </Webcam>
+                : null
             }
             {clientWebcamRef.current ?
                 <canvas

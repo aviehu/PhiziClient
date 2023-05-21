@@ -9,14 +9,18 @@ import {
     FormControl,
     InputLabel,
     Select,
-    MenuItem
+    MenuItem,
+    Slide,
+    Snackbar,
+    Alert
 } from "@mui/material";
 import api from "../util/api";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../context/UserContext";
 
 export default function RegisterPage() {
-
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+    const [openSnackBar, setOpenSnackBar] = useState(false)
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -32,12 +36,18 @@ export default function RegisterPage() {
         navigate('/')
     }
 
-    function handleRegister() {
+    function TransitionRight(props) {
+        return <Slide {...props} direction="right" />;
+    }
+
+    const handleRegister = async () => {
         const bmi = weight / (height / 100)
         const goals = []
         const response = api.register({ name, email, password, age, weight, height, goals, bmi })
         if (!response.error) {
-            navigate('/app')
+            setOpenSnackBar(true)
+            await delay(2000); 
+            navigate('/')
         }
     }
 
@@ -47,7 +57,18 @@ export default function RegisterPage() {
 
     return (
         <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
-            <Paper style={{ display: "flex", height: "80%", width: "60%", justifyContent: "center", alignItems: "center" }}>
+            <Snackbar
+                autoHideDuration={4000}
+                open={openSnackBar}
+                onClose={() => {setOpenSnackBar(false)}}
+                TransitionComponent={TransitionRight}
+                key={'snackBar'}
+            >
+                <Alert onClose={() => setOpenSnackBar(false)} severity="success" sx={{ width: '100%' }}>
+                    User added successfully
+                </Alert>
+            </Snackbar>
+            <Paper variant='elevation' elevation={10} style={{ borderRadius:'5%', display: "flex", height: "80%", backgroundColor:'rgba(255,255,255,0.95)', width: "60%", justifyContent: "center", alignItems: "center"}}>
                 <Stack style={{ textAlign: "center" }} direction="column" spacing={3}>
                     <h1 style={{ paddingBottom: 4 }}>Register</h1>
                     <Stack direction={'row'} spacing={3}>
@@ -61,7 +82,7 @@ export default function RegisterPage() {
                     <Stack direction={'row'} spacing={3}>
                         <TextField key="weight" label="Weight" value={weight} onChange={(event) => setWeight(event.target.value)}></TextField>
                         {
-                            user.role === 'admin' ?
+                            user && user.role === 'admin' ?
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Role</InputLabel>
                                     <Select

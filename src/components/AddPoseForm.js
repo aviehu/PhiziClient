@@ -147,11 +147,11 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
                     Pose added successfully
                 </Alert>
             </Snackbar>
-            <Paper style={{ padding: 100, display: 'flex', justifyContent: "center", alignItems: "center" }}>
-                <Stack direction="column" spacing={3}>
-                    <Stack style={{ textAlign: "center" }} direction="column" spacing={2}>
+            <Paper variant='elevation' elevation={10} style={{ borderRadius:'5%', backgroundColor:'rgba(255,255,255,0.95)', padding: 100, display: 'flex', justifyContent: "center", alignItems: "center", height: "50%", width: "40%" }}>
+                <Stack direction="column" spacing={2} style={{ textAlign: "center" }}>
+                        <h1 style={{ paddingBottom: 2.5}}>Add Pose</h1>
                         <TextField label="Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
-                        <FormControl sx={{ m: 1, width: 300 }}>
+                        <FormControl sx={{ m: 1 }}>
                             <InputLabel id="demo-multiple-checkbox-label">Goals</InputLabel>
                             <Select
                                 labelId="demo-multiple-checkbox-label"
@@ -171,12 +171,12 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
                                 ))}
                             </Select>
                         </FormControl>
-                    </Stack>
-                    <input type="file" multiple accept="image/*" onChange={onImageChange} />
-                    {imageUrl ?
-                        <img hidden={false} src={imageUrl} style={{ width: 250 }}></img> : null
-                    }
-                    <Button onClick={switchView}>Take a Picture</Button>
+
+                        <input type="file" multiple accept="image/*" onChange={onImageChange} style={{marginLeft:70}} />
+                        {imageUrl ?
+                            <img hidden={false} src={imageUrl} style={{ width: 250 }}></img> : null
+                        }
+                        <Button onClick={switchView}>Take a Picture</Button>
                     <Button disabled={!name || !goals} onClick={() => {
                         setOpenSnackBar(true)
                         submitForm()

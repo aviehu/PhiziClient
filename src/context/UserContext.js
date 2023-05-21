@@ -1,3 +1,3 @@
 import {createContext} from "react";
 
-export default createContext({user: "", setUser: (user) => {}})
+export default createContext({getUser:()=>{}, setUser: (user) => {}})

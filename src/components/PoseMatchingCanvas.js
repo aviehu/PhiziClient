@@ -20,6 +20,7 @@ export default function PoseMatchingCanvas({ cameraRatio, targetPose }) {
             height={`${sampledVideoWidth / cameraRatio}px`}
             ref={canvasRef}
             style={{
+                backgroundColor:'rgba(0,0,0,0.5)',
                 position: "absolute",
                 zIndex: 6,
                 width: 200,
@@ -27,7 +28,8 @@ export default function PoseMatchingCanvas({ cameraRatio, targetPose }) {
                 marginLeft: -600,
                 marginTop: -600 / cameraRatio,
                 borderStyle: 'solid',
-                borderColor: 'white'
+                borderColor: 'white',
+                borderRadius:'5%',
             }}
         />
     )
