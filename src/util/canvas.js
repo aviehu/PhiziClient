@@ -23,21 +23,25 @@ export function drawLines(ctx, positions, color) {
     })
 }
 
-export function drawCircles(ctx, positions) {
+export function drawCircles(ctx, positions, matchingJoints) {
+    function isMatching(pos) {
+        return matchingJoints.find((matchingJoint) => pos.part === matchingJoint.name)
+    }
+    console.log(matchingJoints)
     positions.forEach((pos) => {
         ctx.beginPath();
-        ctx.fillStyle = colorMap[pos.part]
+        ctx.fillStyle =  matchingJoints && isMatching(pos) ? 'rgb(2,248,19)' : 'rgb(255,223,0)'
         ctx.arc(pos.x, pos.y, 2, 0, 2 * Math.PI);
         ctx.fill();
     })
 }
 
-export function drawUserSkeleton(ctx, positions, canvasRef) {
+export function drawUserSkeleton(ctx, positions, canvasRef, matchingJoints) {
     if (positions) {
         const poses2D = get2DPositions(positions)
         clearCanvas(ctx, canvasRef.current.width, canvasRef.current.height)
         drawLines(ctx, poses2D, "rgb(26,255,255)")
-        drawCircles(ctx, poses2D)
+        drawCircles(ctx, poses2D, matchingJoints)
     }
 }
 

@@ -34,7 +34,7 @@ export default function AppPage() {
         if (response.error) {
             return
         }
-        setTrainingPoses(response.sessionPoses[0].keypoints)
+        setTrainingPoses(response.sessionPoses[0])
     }
 
     useEffect(() => {
@@ -72,10 +72,9 @@ export default function AppPage() {
             const estimationConfig = { flipHorizontal: false };
             const timestamp = performance.now();
             const poses = await blazePoseModel.estimatePoses(video, estimationConfig, timestamp);
-            drawUserSkeleton(ctx, poses[0], canvasRef)
-            // if (trainingPoses && poses) {
-            //     isMatching(trainingPoses, poses)
-            // }
+            const matchingJoints = trainingPoses && poses ? isMatching(trainingPoses, poses) : []
+            drawUserSkeleton(ctx, poses[0], canvasRef, matchingJoints)
+
             setTimeout(draw, 0)
         }
         draw()
@@ -125,7 +124,7 @@ export default function AppPage() {
                     style={{ zIndex: 5, width: 800, height: 800 / cameraRatio, marginLeft: -800 }}
                 />
                 : null}
-            {clientWebcamRef.current && trainingPoses ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses} /> : null}
+            {clientWebcamRef.current && trainingPoses ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses.keypoints} /> : null}
         </div>
     )
 }
