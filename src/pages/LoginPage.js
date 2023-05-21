@@ -7,8 +7,9 @@ import UserContext from "../context/UserContext";
 export default function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const { user, setUser } = useContext(UserContext)
+    const { getUser, setUser } = useContext(UserContext)
     const navigate = useNavigate()
+    const user = getUser()
 
     async function handleLogin() {
         const response = await api.login({ email, password })

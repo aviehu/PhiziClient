@@ -12,7 +12,7 @@ export default function EditUserProfile() {
     const [height, setHeight] = useState(0)
     const [weight, setWeight] = useState(0)
     const [openSnackBar, setOpenSnackBar] = useState(false)
-    const { user } = useContext(UserContext)
+    const { getUser } = useContext(UserContext)
 
     const navigate = useNavigate()
 
@@ -36,6 +36,7 @@ export default function EditUserProfile() {
 
     useEffect(() => {
         async function load() {
+            const user = getUser()
             setName(user.name)
             setAge(user.age)
             setEmail(user.email)

@@ -10,7 +10,7 @@ import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 
 export default function SideBar({ setOpenSideBar, openSideBar }) {
-    const {user} = useContext(UserContext)
+    const {getUser} = useContext(UserContext)
     const navigate = useNavigate()
 
     function navigateTo(path) {
@@ -39,7 +39,7 @@ export default function SideBar({ setOpenSideBar, openSideBar }) {
                     </ListItem>
                 </List>
                 <Divider />
-                {user && user.role === 'admin' ?
+                {getUser() && getUser().role === 'admin' ?
                 <List>
                     <ListItem key={'editProfile'} >
                         <ListItemButton onClick={() => { navigateTo('/editUserProfile') }}>
@@ -82,7 +82,7 @@ export default function SideBar({ setOpenSideBar, openSideBar }) {
                         </ListItemButton>
                     </ListItem>
                 </List>
-                : user? 
+                : getUser()? 
                 <List>
                     <ListItem key={'editProfile'} >
                         <ListItemButton onClick={() => { navigateTo('/editUserProfile') }}>

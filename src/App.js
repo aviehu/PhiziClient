@@ -9,7 +9,6 @@ import SessionPage from "./pages/SessionPage";
 import AddPosePage from "./pages/AddPosePage";
 import EditUserProfile from "./components/EditUserProfile";
 import backGroundImg from "./purpleBackground.jpg"
-import SchedulePage from "./pages/SchedulePage";
 
 import {
     BrowserRouter as Router,
@@ -43,7 +42,6 @@ function App() {
                         <Route path="/users" Component={UsersPage} />
                         <Route path="/sessions" Component={SessionPage} />
                         <Route path="/editUserProfile" Component={EditUserProfile} />
-                        <Route path="/sched" Component={SchedulePage} />
                     </Routes>
                     </div>
                 </AppBar>

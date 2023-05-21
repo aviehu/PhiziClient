@@ -25,7 +25,8 @@ export default function AppPage() {
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
     const clientWebcamRef = useRef(null)
-    const { user } = useContext(UserContext)
+    const { getUser } = useContext(UserContext)
+    const user = getUser()
 
 
     async function getTrainingPoses() {

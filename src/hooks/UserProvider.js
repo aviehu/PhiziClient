@@ -1,10 +1,18 @@
 import UserContext from "../context/UserContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function UserProvider({children}){
-    const [user,setUser] = useState(null)
+
+    function getUser(){
+        return JSON.parse(localStorage.getItem("user"))
+    }
+
+    function setUser(user){
+        localStorage.setItem("user", JSON.stringify(user))
+    }
+
     return(
-        <UserContext.Provider value = {{user,setUser}}>
+        <UserContext.Provider value = {{getUser,setUser}}>
             {children}
         </UserContext.Provider>
     )
