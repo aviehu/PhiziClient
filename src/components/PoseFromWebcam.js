@@ -42,7 +42,6 @@ export default function PoseFromWebcam({setKeypoints, switchView}) {
             setBlazePoseModel(detector)
             const cameraRatio = await getCameraRatio()
             setCameraRatio(cameraRatio)
-            console.log("ready")
         }
         load()
     }, [])

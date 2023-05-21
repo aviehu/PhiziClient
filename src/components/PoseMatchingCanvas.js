@@ -5,7 +5,6 @@ import { drawUserSkeleton, drawWantedPoseSkeleton } from "../util/canvas";
 export default function PoseMatchingCanvas({ cameraRatio, targetPose }) {
 
     const canvasRef = useRef()
-    console.log(targetPose)
     useEffect(() => {
         if (!canvasRef || !canvasRef.current || !targetPose) {
             return

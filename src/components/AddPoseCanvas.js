@@ -1,11 +1,10 @@
 import { sampledVideoWidth } from "../util/envVars";
 import { useEffect, useRef } from "react";
-import { drawUserSkeleton, drawWantedPoseSkeleton } from "../util/canvas";
+import { drawWantedPoseSkeleton } from "../util/canvas";
 
 export default function AddPoseCanvas({ cameraRatio, targetPose }) {
 
     const canvasRef = useRef()
-    console.log(targetPose)
     useEffect(() => {
         if (!canvasRef || !canvasRef.current || !targetPose) {
             return

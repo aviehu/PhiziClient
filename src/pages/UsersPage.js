@@ -23,7 +23,6 @@ export default function UsersPage() {
         const response = await api.getAllUsers()
         if (!response.error) {
             setUsersList(response)
-            console.log(response)
             return
         }
         alert(response.error)

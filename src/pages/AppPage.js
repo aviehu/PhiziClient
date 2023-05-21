@@ -35,7 +35,6 @@ export default function AppPage() {
             return
         }
         setTrainingPoses(response.sessionPoses[0].keypoints)
-        console.log('session', response.sessionPoses[0].keypoints)
     }
 
     useEffect(() => {

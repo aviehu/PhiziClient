@@ -12,7 +12,6 @@ export default function SessionPage() {
 
     async function load() {
         const sessions = await api.getAllSessions()
-        console.log(sessions)
         setSessions(sessions)
     }
 

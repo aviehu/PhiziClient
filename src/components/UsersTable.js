@@ -63,7 +63,6 @@ export default function SessionsTable({ usersList, handleGoals,goalsProps,goalsN
                             renderValue={(selected) => selected.join(', ')}
                             MenuProps={goalsProps}
                             >
-                            console.log("mygoals!",goals)
                             {goalsNames.map((goal) => (
                                 <MenuItem key={goal} value={goal}>
                                     <Checkbox checked={user.goals.indexOf(goal) > -1} />

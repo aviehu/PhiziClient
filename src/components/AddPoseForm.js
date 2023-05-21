@@ -74,7 +74,6 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
                 const poses = await blazePoseModel.estimatePoses(resizedImageRef.current, estimationConfig, timestamp);
                 const positions = poses[0]
                 if (positions) {
-                    console.log("postions", positions)
                     const poses3D = get3DPositions(positions)
                     const posAngles = calcAngles(poses3D)
                     const poses2D = get2DPositions(positions)
@@ -125,7 +124,6 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
 
     const handleGoalChange = (event) => {
         const values = event.target.value
-        console.log(values)
         setGoals(values)
     }
 
