@@ -10,6 +10,7 @@ import api from "../util/api";
 import PoseMatchingCanvas from "../components/PoseMatchingCanvas";
 import isMatching from "../poseMatching/poseMatching";
 import UserContext from "../context/UserContext";
+import { calcAngles } from "../util/calc";
 
 const detectorConfig = {
     runtime: 'mediapipe',
@@ -21,7 +22,9 @@ export default function AppPage() {
     const [isRunning, setIsRunning] = useState(false)
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [cameraRatio, setCameraRatio] = useState(-1)
+    const [trainingPoseTimeOut, setTrainingPoseTimeOut] = useState(null)
     const [trainingPoses, setTrainingPoses] = useState(null)
+    const [trainingPoseIndex,setTrainingPoseIndex] = useState(0)
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
     const clientWebcamRef = useRef(null)
@@ -30,11 +33,12 @@ export default function AppPage() {
 
 
     async function getTrainingPoses() {
-        const response = await api.getSessionForUser(['Legs', 'Upper Body', 'Shoulders'])
+        const response = await api.getSessionForUser(['Upper Body','Legs', 'Shoulders'])
         if (response.error) {
             return
         }
-        setTrainingPoses(response.sessionPoses[0])
+        const sessionPoses = response.sessionPoses.map((pose) => {return {...pose,poseAngles: calcAngles(pose.keypoints3D).filter((poseAngle)=> poseAngle !== -1)}})
+        setTrainingPoses(sessionPoses)
     }
 
     useEffect(() => {
@@ -72,16 +76,26 @@ export default function AppPage() {
             const estimationConfig = { flipHorizontal: false };
             const timestamp = performance.now();
             const poses = await blazePoseModel.estimatePoses(video, estimationConfig, timestamp);
-            const matchingJoints = trainingPoses && poses ? isMatching(trainingPoses, poses) : []
+            const matchingJoints = trainingPoses[trainingPoseIndex] && poses ? isMatching(trainingPoses[trainingPoseIndex].poseAngles, poses) : []
             drawUserSkeleton(ctx, poses[0], canvasRef, matchingJoints)
-
             setTimeout(draw, 0)
+            if(trainingPoses && matchingJoints.length === trainingPoses[trainingPoseIndex].poseAngles.length){
+                if(!trainingPoseTimeOut){
+                    setTrainingPoseTimeOut(setTimeout(() => {
+                        setTrainingPoseIndex(trainingPoseIndex+1)
+                        setTrainingPoseTimeOut(null)} , 2000))
+                }
+            }
+            else if(trainingPoseTimeOut){
+                clearTimeout(trainingPoseTimeOut)
+                setTrainingPoseTimeOut(null)
+            }
         }
         draw()
         return () => {
             internallIsRunning = false
         }
-    }, [isRunning, webcamRef.current, blazePoseModel, canvasRef.current])
+    }, [isRunning, webcamRef.current, blazePoseModel, canvasRef.current,trainingPoseTimeOut])
 
     async function startDrawing() {
         setIsRunning(true)
@@ -124,7 +138,7 @@ export default function AppPage() {
                     style={{ zIndex: 5, width: 800, height: 800 / cameraRatio, marginLeft: -800 }}
                 />
                 : null}
-            {clientWebcamRef.current && trainingPoses ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses.keypoints} /> : null}
+            {clientWebcamRef.current && trainingPoses[trainingPoseIndex] && trainingPoseIndex > -1 ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses[trainingPoseIndex].keypoints} /> : null}
         </div>
     )
 }

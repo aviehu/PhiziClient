@@ -27,7 +27,6 @@ export function drawCircles(ctx, positions, matchingJoints) {
     function isMatching(pos) {
         return matchingJoints.find((matchingJoint) => pos.part === matchingJoint.name)
     }
-    console.log(matchingJoints)
     positions.forEach((pos) => {
         ctx.beginPath();
         ctx.fillStyle =  matchingJoints && isMatching(pos) ? 'rgb(2,248,19)' : 'rgb(255,223,0)'
