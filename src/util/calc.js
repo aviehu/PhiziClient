@@ -30,12 +30,24 @@ export function findAngle(p1, p2, p3) {
     return Math.acos(angle) * (180 / Math.PI)
 }
 
+export function getNormalVector(p1, p2, p3) {
+    const v1 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
+    const v2 = [p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2]];
+    const normal = [
+        v1[1] * v2[2] - v1[2] * v2[1],
+        v1[2] * v2[0] - v1[0] * v2[2],
+        v1[0] * v2[1] - v1[1] * v2[0]
+    ];
+    return normal;
+}
+
 export function calculateAngle(name, points) {
     if (!points[0] || !points[1] || !points[2]) {
         return -1;
     }
     const angle = findAngle(points[0], points[1], points[2]);
-    return { name, angle }
+    const normal = getNormalVector(points[0], points[1], points[2]);
+    return { name, angle, normal }
 }
 
 export function calcAngles(positions) {

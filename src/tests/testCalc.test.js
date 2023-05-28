@@ -1,4 +1,4 @@
-import { dist, calculateAngle, findAngle, findCoord, calcAngles, calcLengths } from '../util/calc'
+import { dist, calculateAngle, findAngle, findCoord, calcAngles, calcLengths, getNormalVector } from '../util/calc'
 
 test('dist_validPoints1', () => {
     const p1 = [0, 0, 1]
@@ -185,3 +185,11 @@ test('calcLengths_emptyPositiona', () => {
     expect(result).toMatchObject([])
 })
 
+test('getNormalVector_zNormal', () => {
+    const p1 = [0, 0, 0];
+    const p2 = [1, 0, 0];
+    const p3 = [0, 1, 0];
+
+    const normal = getNormalVector(p1, p2, p3);
+    expect(normal).toMatchObject([0, 0, 1])
+})
