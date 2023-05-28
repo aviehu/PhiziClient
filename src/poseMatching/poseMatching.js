@@ -1,10 +1,8 @@
 import { calcAngles } from '../util/calc'
 import get3DPositions from "../util/get3DPositions";
 
-export default function isMatching(wantedPose, userPose) {
-    const wantedPose3D = wantedPose.keypoints3D
+export default function isMatching(wantedPoseAngles, userPose) {
     const userPose3D = get3DPositions(userPose[0])
-    const wantedPoseAngles = calcAngles(wantedPose3D)
     const userPoseAngles = calcAngles(userPose3D)
     const ans = []
     for (let i = 0; i < wantedPoseAngles.length; i++) {
@@ -20,7 +18,6 @@ export default function isMatching(wantedPose, userPose) {
             ans.push(wantedAngle)
         }
     }
-    console.log(ans)
     return ans
 }
 

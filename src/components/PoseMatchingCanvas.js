@@ -11,7 +11,7 @@ export default function PoseMatchingCanvas({ cameraRatio, targetPose }) {
         }
         const ctx = canvasRef.current.getContext('2d')
         drawWantedPoseSkeleton(ctx, targetPose, canvasRef)
-    }, [canvasRef.current])
+    }, [canvasRef.current, targetPose])
 
     return (
         <canvas
