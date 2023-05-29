@@ -23,7 +23,6 @@ function App() {
     return (
         <Router>
             <UserProvider>
-                
                 <AppBar>
                 <div style={{
                     height:'100%',
@@ -43,9 +42,8 @@ function App() {
                         <Route path="/sessions" Component={SessionPage} />
                         <Route path="/editUserProfile" Component={EditUserProfile} />
                     </Routes>
-                    </div>
+                </div>
                 </AppBar>
-                
             </UserProvider>
         </Router>
     );

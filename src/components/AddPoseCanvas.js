@@ -14,6 +14,6 @@ export default function AddPoseCanvas({ cameraRatio, targetPose }) {
     }, [canvasRef.current])
 
     return (
-        <canvas width={`${sampledVideoWidth}px`} height={`${sampledVideoWidth / cameraRatio}px`} ref={canvasRef} style={{ zIndex: 6, width: 800, height: 800 / cameraRatio, marginLeft: -800 }} />
+        <canvas width={`${sampledVideoWidth}px`} height={`${sampledVideoWidth / cameraRatio}px`} ref={canvasRef} style={{ zIndex: 6, width: 650, height: 650 / cameraRatio, marginLeft: -650 }} />
     )
 }

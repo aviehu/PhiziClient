@@ -11,7 +11,6 @@ export default function isMatching(wantedPoseAngles, userPose) {
         if ((wantedAngle !== -1 && userAngle === -1)
         ||  Math.abs(wantedAngle.angle - userAngle.angle) > 15
         ||  findAngle(wantedAngle.normal, [0,0,0], userAngle.normal) > 20) {
-            console.log(findAngle(wantedAngle.normal, [0,0,0], userAngle.normal))
             break
         }
         if(wantedAngle !== -1) {

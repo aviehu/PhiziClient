@@ -28,7 +28,7 @@ export default function PhiziAppBar({children}) {
 
   return (
       <div style={{position: 'absolute',backgroundColor: 'white', width: '100%', height: '100%'}}>
-          <AppBar position= "sticky" style={{background: "rgba(16, 16, 16, 0.7)"}}>
+          <AppBar position= "fixed" style={{background: "rgba(16, 16, 16, 0.7)"} }>
               <Toolbar>
                 {getUser()?
                   <IconButton
@@ -49,7 +49,7 @@ export default function PhiziAppBar({children}) {
                   : <Button onClick={handleLogin} color="inherit">Login</Button>}
                 </Toolbar>
             </AppBar>
-            <SideBar openSideBar={openSideBar} setOpenSideBar={setOpenSideBar}/>
+            <SideBar openSideBar={openSideBar} setOpenSideBar={setOpenSideBar} />
           {children}
       </div>
   );
