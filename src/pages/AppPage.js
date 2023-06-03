@@ -38,7 +38,7 @@ export default function AppPage() {
 
 
     async function getTrainingPoses() {
-        const response = await api.getSessionForUser(['Upper Body','Legs', 'Shoulders'])
+        const response = await api.getSessionForUser(user.goals)
         if (response.error) {
             return
         }
@@ -87,9 +87,14 @@ export default function AppPage() {
             if(trainingPoses && matchingJoints.length === trainingPoses[trainingPoseIndex].poseAngles.length){
                 if(!trainingPoseTimeOut){
                     setTrainingPoseTimeOut(setTimeout(() => {
-                        setOpenSuccessAnim(true)
-                        setTrainingPoseIndex(trainingPoseIndex+1)
-                        setTrainingPoseTimeOut(null)} , 2000))
+                        if (trainingPoses.length === trainingPoseIndex+1) {
+                            //end session
+                            stopDrawing()
+                        } else {
+                            setOpenSuccessAnim(true)
+                            setTrainingPoseIndex(trainingPoseIndex+1)
+                            setTrainingPoseTimeOut(null)
+                        }} , 2000))
                 }
             }
             else if(trainingPoseTimeOut){
@@ -135,7 +140,6 @@ export default function AppPage() {
             >
             </Webcam>
             {cameraRatio > 0 ?
-                // <Paper variant='elevation' elevation={10} style={{borderRadius:'5%', opacity:'90%', display: "flex", height: "60%", width: "50%", justifyContent: "center", alignItems: "center" }}>
                 <Webcam
                     ref={clientWebcamRef}
                     style={{ borderRadius:'1%',zIndex: 1, width: 650, height: 650 / cameraRatio }}
