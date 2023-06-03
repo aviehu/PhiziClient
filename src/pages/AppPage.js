@@ -3,7 +3,7 @@ import { sampledVideoWidth } from "../util/envVars";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
 import Webcam from "react-webcam";
-import {Backdrop, Button} from "@mui/material";
+import {Backdrop, Button, Stack} from "@mui/material";
 import getCameraRatio from "../util/getCameraRatio";
 import { clearCanvas, drawUserSkeleton } from '../util/canvas'
 import api from "../util/api";
@@ -13,6 +13,7 @@ import UserContext from "../context/UserContext";
 import { calcAngles } from "../util/calc";
 import animationData from "../79952-successful.json"
 import Lottie, {LottieRefCurrentProps}from 'lottie-react'
+import finishAnimData from "../finishAnim.json"
 
 
 const detectorConfig = {
@@ -26,6 +27,7 @@ export default function AppPage() {
     const [isRunning, setIsRunning] = useState(false)
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [openSuccessAnim, setOpenSuccessAnim] = useState(false)
+    const [openFinishSessionAnim, setOpenFinishSessionAnim] = useState(false)
     const [cameraRatio, setCameraRatio] = useState(-1)
     const [trainingPoseTimeOut, setTrainingPoseTimeOut] = useState(null)
     const [trainingPoses, setTrainingPoses] = useState(null)
@@ -89,6 +91,7 @@ export default function AppPage() {
                     setTrainingPoseTimeOut(setTimeout(() => {
                         if (trainingPoses.length === trainingPoseIndex+1) {
                             //end session
+                            setOpenFinishSessionAnim(true)
                             stopDrawing()
                         } else {
                             setOpenSuccessAnim(true)
@@ -118,10 +121,16 @@ export default function AppPage() {
 
 
     const handleSuccessAnimationComplete = () => {
-        console.log("finish")
         setTimeout(() => {
           setOpenSuccessAnim(false);
         }, 1900); // Adjust the delay as needed
+      };
+
+      const handleFinisAnimationComplete = () => {
+        console.log("finish")
+        setTimeout(() => {
+          setOpenFinishSessionAnim(false)
+        }, 1500); // Adjust the delay as needed
       };
 
     return (
@@ -169,7 +178,20 @@ export default function AppPage() {
                     onComplete={handleSuccessAnimationComplete}
                     />
                 </Backdrop>
-            )}        
+            )}
+             {openFinishSessionAnim && (
+                <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={openFinishSessionAnim}
+                >   
+                        <Lottie
+                        animationData={finishAnimData}
+                        loop={false}
+                        onComplete={handleFinisAnimationComplete}
+                        />
+                    
+                </Backdrop>
+            )}                
         </div>
     )
 }
