@@ -8,6 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import GroupIcon from '@mui/icons-material/Group';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
+import HomeIcon from '@mui/icons-material/Home';
 
 export default function SideBar({ setOpenSideBar, openSideBar }) {
     const {getUser} = useContext(UserContext)
@@ -27,8 +28,17 @@ export default function SideBar({ setOpenSideBar, openSideBar }) {
             <Box
                 sx={{ width: 250 }}
                 role="presentation"
+                
             >
                 <List>
+                    <ListItem key={'home'} >
+                        <ListItemButton  onClick={() => { navigateTo('/')}}>
+                            <ListItemIcon>
+                                <HomeIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary='home' />
+                        </ListItemButton>
+                    </ListItem>
                     <ListItem key={'playGame'} >
                         <ListItemButton  onClick={() => { navigateTo('/app')}}>
                             <ListItemIcon>

@@ -94,18 +94,21 @@ export default function PoseFromWebcam({setKeypoints, switchView}) {
         <div 
             style={{
                 position: 'absolute',
-                backgroundColor: 'white',
+                // backgroundColor: 'white',
                 width: '100%',
-                height: '100%',
+                height: '90%',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'}}
+                justifyContent: 'center',
+                marginTop:48,
+                }}
         >
             <Stack direction='row' justifyContent="space-between" style={{position:"absolute", top: 20, left:20, right: 20}}>
                 <Button
                     variant={'contained'}
                     disabled={isRunning}
                     onClick={() => startDrawing()}
+                    style={{top:10}}
                 >
                     Draw Skeleton
                 </Button>
@@ -115,6 +118,7 @@ export default function PoseFromWebcam({setKeypoints, switchView}) {
                     variant={'contained'}
                     color="primary"
                     onClick={takeScreenShot}
+                    style={{top:10}}
                 >
                     Take Picture
                 </Button>
@@ -131,7 +135,7 @@ export default function PoseFromWebcam({setKeypoints, switchView}) {
             {cameraRatio > 0 ?
                 <Webcam
                     ref={clientWebcamRef}
-                    style={{ zIndex: 1, width: 800, height: 800 / cameraRatio}}
+                    style={{ zIndex: 1, width: 650, height: 650 / cameraRatio}}
                     mirrored={true}
                 >
                 </Webcam>:
@@ -142,7 +146,7 @@ export default function PoseFromWebcam({setKeypoints, switchView}) {
                     width={`${sampledVideoWidth}px`}
                     height={`${sampledVideoWidth / cameraRatio}px`}
                     ref={canvasRef}
-                    style={{ zIndex: 5, width: 800, height: 800 / cameraRatio, marginLeft: -800}}
+                    style={{ zIndex: 5, width: 650, height: 650 / cameraRatio, marginLeft: -650}}
                 />
                 : null}
             { screenShot ? <AddPoseCanvas cameraRatio={cameraRatio} targetPose={get2DPositions(screenShot)}/> : null }

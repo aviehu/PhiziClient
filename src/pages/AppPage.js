@@ -3,7 +3,7 @@ import { sampledVideoWidth } from "../util/envVars";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
 import Webcam from "react-webcam";
-import { Button} from "@mui/material";
+import {Backdrop, Button} from "@mui/material";
 import getCameraRatio from "../util/getCameraRatio";
 import { clearCanvas, drawUserSkeleton } from '../util/canvas'
 import api from "../util/api";
@@ -11,6 +11,9 @@ import PoseMatchingCanvas from "../components/PoseMatchingCanvas";
 import isMatching from "../poseMatching/poseMatching";
 import UserContext from "../context/UserContext";
 import { calcAngles } from "../util/calc";
+import animationData from "../79952-successful.json"
+import Lottie, {LottieRefCurrentProps}from 'lottie-react'
+
 
 const detectorConfig = {
     runtime: 'mediapipe',
@@ -19,8 +22,10 @@ const detectorConfig = {
 };
 
 export default function AppPage() {
+    const successAnimRef = useRef<LottieRefCurrentProps>(null)
     const [isRunning, setIsRunning] = useState(false)
     const [blazePoseModel, setBlazePoseModel] = useState(null)
+    const [openSuccessAnim, setOpenSuccessAnim] = useState(false)
     const [cameraRatio, setCameraRatio] = useState(-1)
     const [trainingPoseTimeOut, setTrainingPoseTimeOut] = useState(null)
     const [trainingPoses, setTrainingPoses] = useState(null)
@@ -82,6 +87,7 @@ export default function AppPage() {
             if(trainingPoses && matchingJoints.length === trainingPoses[trainingPoseIndex].poseAngles.length){
                 if(!trainingPoseTimeOut){
                     setTrainingPoseTimeOut(setTimeout(() => {
+                        setOpenSuccessAnim(true)
                         setTrainingPoseIndex(trainingPoseIndex+1)
                         setTrainingPoseTimeOut(null)} , 2000))
                 }
@@ -105,12 +111,20 @@ export default function AppPage() {
         setIsRunning(false)
     }
 
+
+    const handleSuccessAnimationComplete = () => {
+        console.log("finish")
+        setTimeout(() => {
+          setOpenSuccessAnim(false);
+        }, 1900); // Adjust the delay as needed
+      };
+
     return (
-        <div style={{ position: 'absolute', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Button variant={'contained'} disabled={isRunning} style={{ position: "absolute", zIndex: 10, left: 15, top: 15 }} onClick={() => startDrawing()}>
-                Draw Skeleton
+        <div style={{ position: 'absolute', width: '100%', height: '90%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop:55}}>
+            <Button variant={'contained'} disabled={isRunning} style={{ position: "absolute", zIndex: 10, left: 15, top: 45 }} onClick={() => startDrawing()}>
+                Start Game
             </Button>
-            <Button variant={'contained'} style={{ position: "absolute", zIndex: 10, right: 15, top: 15 }} color="primary" onClick={stopDrawing}>Stop</Button>
+            <Button variant={'contained'} style={{ position: "absolute", zIndex: 10, right: 15, top: 45 }} color="primary" onClick={stopDrawing}>Stop</Button>
             <Webcam
                 ref={webcamRef}
                 style={{ zIndex: -1, position: "absolute", left: 0, top: 0 }}
@@ -124,7 +138,7 @@ export default function AppPage() {
                 // <Paper variant='elevation' elevation={10} style={{borderRadius:'5%', opacity:'90%', display: "flex", height: "60%", width: "50%", justifyContent: "center", alignItems: "center" }}>
                 <Webcam
                     ref={clientWebcamRef}
-                    style={{ borderRadius:'1%',zIndex: 1, width: 800, height: 800 / cameraRatio }}
+                    style={{ borderRadius:'1%',zIndex: 1, width: 650, height: 650 / cameraRatio }}
                     mirrored={true}
                 >
                 </Webcam>
@@ -135,10 +149,23 @@ export default function AppPage() {
                     width={`${sampledVideoWidth}px`}
                     height={`${sampledVideoWidth / cameraRatio}px`}
                     ref={canvasRef}
-                    style={{ zIndex: 5, width: 800, height: 800 / cameraRatio, marginLeft: -800 }}
+                    style={{ zIndex: 5, width: 650, height: 650 / cameraRatio, marginLeft: -650}}
                 />
                 : null}
             {clientWebcamRef.current && trainingPoses[trainingPoseIndex] && trainingPoseIndex > -1 ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses[trainingPoseIndex].keypoints} /> : null}
+            {openSuccessAnim && (
+                <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={openSuccessAnim}
+                >              
+                    <Lottie
+                    lottieRef={successAnimRef}
+                    animationData={animationData}
+                    loop={false}
+                    onComplete={handleSuccessAnimationComplete}
+                    />
+                </Backdrop>
+            )}        
         </div>
     )
 }

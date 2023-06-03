@@ -59,7 +59,7 @@ export default function EditUserProfile() {
                     Profile saved successfully
                 </Alert>
             </Snackbar>
-            <Paper variant='elevation' elevation={10} style={{borderRadius:'5%', backgroundColor:'rgba(255,255,255,0.95)', display: "flex", height: "80%", width: "60%", justifyContent: "center", alignItems: "center" }}>
+            <Paper variant='elevation' elevation={10} style={{borderRadius:'5%', backgroundColor:'rgba(255,255,255,0.95)', display: "flex", height: "75%", width: "55%", justifyContent: "center", alignItems: "center"}}>
                 <Stack style={{ textAlign: "center" }} direction="column" spacing={3}>
                     <h1 style={{ paddingBottom: 4 }}>Edit Profile</h1>
                     <Stack direction={'row'} spacing={3}>

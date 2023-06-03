@@ -145,7 +145,7 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
                     Pose added successfully
                 </Alert>
             </Snackbar>
-            <Paper variant='elevation' elevation={10} style={{ borderRadius:'5%', backgroundColor:'rgba(255,255,255,0.95)', padding: 100, display: 'flex', justifyContent: "center", alignItems: "center", height: "50%", width: "40%" }}>
+            <Paper variant='elevation' elevation={10} style={{ borderRadius:'5%', backgroundColor:'rgba(255,255,255,0.95)', padding: 100, display: 'flex', justifyContent: "center", alignItems: "center", height: "40%", width: "30%" }}>
                 <Stack direction="column" spacing={2} style={{ textAlign: "center" }}>
                         <h1 style={{ paddingBottom: 2.5}}>Add Pose</h1>
                         <TextField label="Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>

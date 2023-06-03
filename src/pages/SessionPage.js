@@ -25,7 +25,7 @@ export default function SessionPage() {
     }
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding:50}}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding:50, paddingTop: 80}}>
             <Button variant={'contained'} onClick={() => setOpenAddSession(true)}>Add Session</Button>
             {
                 openAddSession ?
