@@ -7,6 +7,7 @@ import UserProvider from './hooks/UserProvider'
 import WelcomePage from './pages/WelcomePage'
 import SessionPage from "./pages/SessionPage";
 import AddPosePage from "./pages/AddPosePage";
+import ScoresPage from "./pages/ScoresPage";
 import EditUserProfile from "./components/EditUserProfile";
 import backGroundImg from "./purpleBackground.jpg"
 
@@ -40,6 +41,7 @@ function App() {
                         <Route path="/poses" Component={AddPosePage} />
                         <Route path="/users" Component={UsersPage} />
                         <Route path="/sessions" Component={SessionPage} />
+                        <Route path="/scores" Component={ScoresPage} />
                         <Route path="/editUserProfile" Component={EditUserProfile} />
                     </Routes>
                 </div>

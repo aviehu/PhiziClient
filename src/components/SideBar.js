@@ -9,6 +9,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import HomeIcon from '@mui/icons-material/Home';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 export default function SideBar({ setOpenSideBar, openSideBar }) {
     const {getUser} = useContext(UserContext)
@@ -89,6 +90,14 @@ export default function SideBar({ setOpenSideBar, openSideBar }) {
                                 <GroupIcon/>
                             </ListItemIcon>
                             <ListItemText primary='Users' />
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem key={'scores'} >
+                        <ListItemButton onClick={() => { navigateTo('/scores') }}>
+                            <ListItemIcon>
+                                <BarChartIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary='Scores' />
                         </ListItemButton>
                     </ListItem>
                 </List>

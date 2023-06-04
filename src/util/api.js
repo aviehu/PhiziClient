@@ -135,4 +135,24 @@ api.getPosesByGoals = async function (body) {
     return await response.json()
 }
 
+// Scores API
+
+api.getUserScores = async function (user) {
+    const requestOptions = getRequestOptions()
+    const response = await fetch(`${serverUrl}/scores/getUserScores/${user}`, requestOptions)
+    return await response.json()
+}
+
+api.getSessionScores = async function (session) {
+    const requestOptions = getRequestOptions()
+    const response = await fetch(`${serverUrl}/scores/getSessionScores/${session}`, requestOptions)
+    return await response.json()
+}
+
+api.addScore = async function (body) {
+    const requestOptions = postRequestOptions(body)
+    const response = await fetch(`${serverUrl}/scores/addScore`, requestOptions)
+    return await response.json()
+}
+
 export default api
