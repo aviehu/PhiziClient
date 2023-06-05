@@ -1,110 +1,107 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import {useContext, useState, useEffect} from "react";
 import api from "../util/api";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
 
-const ScoreTable = () => {
-    const [scores, setScores] = useState([]);
-    const [viewBy, setViewBy] = useState('session');
-    const [sessions, setSessions] = useState([]);
-    const [users, setUsers] = useState([]);
-    const [selectedSession, setSelectedSession] = useState('');
-    const [selectedUser, setSelectedUser] = useState('');
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-
-    useEffect(() => {
-        const fetchData = async () => {
-            let result;
-            if (viewBy === 'session') {
-                result = await api.getSessionScores(selectedSession);
-            } else {
-                result = await api.getUserScores(selectedUser);
-            }
-            setScores(result.data);
-        };
-        fetchData();
-    }, [viewBy, selectedSession, selectedUser]);
-
-    useEffect(() => {
-        const fetchSessions = async () => {
-            const result = await api.getAllSessions()
-            setSessions(result.data);
-        };
-        fetchSessions();
-    }, []);
-
-    useEffect(() => {
-        const fetchUsers = async () => {
-            const result = await api.getAllUsers()
-            setUsers(result.data);
-        };
-        fetchUsers();
-    }, []);
-
-    return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 50 }}>
-            <h1>Scores</h1>
-            <select value={viewBy} onChange={e => setViewBy(e.target.value)}>
-                <option value="session">View by session</option>
-                <option value="user">View by user</option>
-            </select>
-            {viewBy === 'session' ? (
-                <>
-                    <select value={selectedSession} onChange={e => setSelectedSession(e.target.value)}>
-                        {sessions.map(session => (
-                            <option key={session} value={session}>
-                                {session}
-                            </option>
-                        ))}
-                    </select>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Duration</th>
-                            <th>Date</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {scores.map(score => (
-                            <tr key={score._id}>
-                                <td>{score.user}</td>
-                                <td>{score.duration}</td>
-                                <td>{new Date(score.date).toLocaleDateString()}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                </>
-            ) : (
-                <>
-                    <select value={selectedUser} onChange={e => setSelectedUser(e.target.value)}>
-                        {users.map(user => (
-                            <option key={user} value={user}>
-                                {user}
-                            </option>
-                        ))}
-                    </select>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Session</th>
-                            <th>Duration</th>
-                            <th>Date</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {scores.map(score => (
-                            <tr key={score._id}>
-                                <td>{score.session}</td>
-                                <td>{score.duration}</td>
-                                <td>{new Date(score.date).toLocaleDateString()}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                </>
-            )}
-        </div>
-    );
+const options = {
+  responsive: true,
+  interaction: {
+    mode: 'index',
+    intersect: false,
+  },
+  stacked: false,
+  plugins: {
+    title: {
+      display: true,
+      text: 'Chart.js Line Chart - Multi Axis',
+    },
+  },
+  scales: {
+    y: {
+      type: 'linear',
+      display: true,
+      position: 'left',
+    },
+    y1: {
+      type: 'linear',
+      display: true,
+      position: 'right',
+      grid: {
+        drawOnChartArea: false,
+      },
+    },
+  },
 };
 
-export default ScoreTable;
+
+
+
+
+export default function ScorePage(myUser) {
+    const [userScores,setUserScores] = useState(null)
+    const [labels, setLabels] = useState(null)
+    const [data, setData] = useState(null)
+
+    async function getUserScores() {
+        const response = await api.getUserScores(myUser)
+        if (response.error) {
+            return
+        }
+        const sets = response.map((score) => {return {
+            label: score.session,
+            data: labels.map(() => 5),
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            yAxisID: score.session,
+        }})
+        setData({
+            labels,
+            datasets: [...sets]
+          })
+        setUserScores(response)
+    }
+
+    function generateLables() {
+        const today = Date.today()
+        const month = today.getMonth()
+        const year = today.getYear()
+        const daysInMonth = Date.getDaysInMonth(year, month)
+        setLabels(daysInMonth)
+    }
+
+    useEffect(() => {
+        async function load() {
+            generateLables()
+            getUserScores()
+        }
+        load()
+    }, [])
+
+
+  return(
+    <div style={{ position: 'absolute', width: '100%', height: '70%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop:60}}>
+        <Line options={options} data={data} />;
+    </div>
+  )
+   
+}
