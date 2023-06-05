@@ -13,6 +13,7 @@ import UserContext from "../context/UserContext";
 import { calcAngles } from "../util/calc";
 import animationData from "../79952-successful.json"
 import Lottie, {LottieRefCurrentProps}from 'lottie-react'
+import DisplaySessionOptions from "../components/DisplaySessionOptions";
 
 
 const detectorConfig = {
@@ -30,8 +31,10 @@ export default function AppPage() {
     const [trainingPoseTimeOut, setTrainingPoseTimeOut] = useState(null)
     const [trainingPoses, setTrainingPoses] = useState(null)
     const [trainingPoseIndex,setTrainingPoseIndex] = useState(0)
-    const [session ,setSession] = useState(null)
+    const [displaySessionOptions,setDisplaySessionOptions] = useState(true)
+    const [sessions ,setSessions] = useState(null)
     const [startTime ,setStartTime] = useState(null)
+    const [chosenSession ,setChosenSession] = useState(null)
 
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
@@ -41,21 +44,22 @@ export default function AppPage() {
 
 
     async function getTrainingPoses() {
-        const response = await api.getSessionForUser(user.goals)
+        const response = await api.getAllSessionsForUser(user.goals)
         if (response.error) {
             return
         }
-        const sessionPoses = response.sessionPoses.map((pose) => {return {...pose,poseAngles: calcAngles(pose.keypoints3D).filter((poseAngle)=> poseAngle !== -1)}})
-        setSession(response.session)
-        setTrainingPoses(sessionPoses)
+        console.log("clientsession:", response)
+        setSessions(response)
     }
 
     async function saveScore() {
-        const sessionName = session.name
-        const userEmail = user.email
-        const duration = (new Date() - startTime)/1000
-        console.log(duration)
-        await api.addScore({user: userEmail, session:sessionName, duration: duration.toFixed(2)})
+        if(chosenSession){
+            const sessionName = chosenSession.name
+            const userEmail = user.email
+            const duration = (new Date() - startTime)/1000
+            console.log(duration)
+            await api.addScore({user: userEmail, session:sessionName, duration: duration.toFixed(2)})
+        }
     }
 
     useEffect(() => {
@@ -65,6 +69,22 @@ export default function AppPage() {
         webcamRef.current.video.width = sampledVideoWidth
         webcamRef.current.video.height = sampledVideoWidth / cameraRatio
     }, [webcamRef.current, cameraRatio])
+
+
+    useEffect(() => {
+        if (!chosenSession) {
+            return
+        }
+        async function loadSessionPoses(){
+            const response = await api.getSessionPoses(chosenSession.name)
+            if (response.error) {
+                return
+            }
+            const sessionPoses = response.sessionPoses.map((pose) => {return {...pose,poseAngles: calcAngles(pose.keypoints3D).filter((poseAngle)=> poseAngle !== -1)}})
+            setTrainingPoses(sessionPoses)
+        }
+        loadSessionPoses()
+    }, [chosenSession])
 
     useEffect(() => {
         async function load() {
@@ -157,6 +177,7 @@ export default function AppPage() {
                 Start Game
             </Button>
             <Button variant={'contained'} style={{ position: "absolute", zIndex: 10, right: 15, top: 45 }} color="primary" onClick={stopDrawing}>Stop</Button>
+           
             <Webcam
                 ref={webcamRef}
                 style={{ zIndex: -1, position: "absolute", left: 0, top: 0 }}
@@ -183,7 +204,10 @@ export default function AppPage() {
                     style={{ zIndex: 5, width: 650, height: 650 / cameraRatio, marginLeft: -650}}
                 />
                 : null}
-            {clientWebcamRef.current && trainingPoses[trainingPoseIndex] && trainingPoseIndex > -1 ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses[trainingPoseIndex].keypoints} /> : null}
+             {sessions && displaySessionOptions?
+                <DisplaySessionOptions sessions={sessions} setChosenSession={setChosenSession} setDisplaySessionOptions={setDisplaySessionOptions}/>
+            : null}
+            {clientWebcamRef.current && trainingPoses && trainingPoses[trainingPoseIndex] && trainingPoseIndex > -1 ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses[trainingPoseIndex].keypoints} /> : null}
             {openSuccessAnim && (
                 <Backdrop
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
