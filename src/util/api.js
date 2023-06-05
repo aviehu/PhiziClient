@@ -96,6 +96,19 @@ api.getSessionForUser = async function (goals) {
     return await response.json()
 }
 
+api.getSessionPoses = async function (name) {
+    const requestOptions = postRequestOptions({name})
+    const response = await fetch(`${serverUrl}/sessions/getSessionPoses`, requestOptions)
+    return await response.json()
+}
+
+api.getAllSessionsForUser = async function (goals) {
+    const requestOptions = postRequestOptions({goals})
+    const response = await fetch(`${serverUrl}/sessions/getAllSessionsForUser`, requestOptions)
+    return await response.json()
+}
+
+
 
 // Poses API
 
