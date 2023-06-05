@@ -5,6 +5,7 @@ import * as mpPose from "@mediapipe/pose";
 import Webcam from "react-webcam";
 import {Backdrop, Button} from "@mui/material";
 import getCameraRatio from "../util/getCameraRatio";
+import { useNavigate } from "react-router-dom";
 import { clearCanvas, drawUserSkeleton } from '../util/canvas'
 import api from "../util/api";
 import PoseMatchingCanvas from "../components/PoseMatchingCanvas";
@@ -24,6 +25,7 @@ const detectorConfig = {
 };
 
 export default function AppPage() {
+    const delay = ms => new Promise(res => setTimeout(res, ms));
     const successAnimRef = useRef<LottieRefCurrentProps>(null)
     const [isRunning, setIsRunning] = useState(false)
     const [blazePoseModel, setBlazePoseModel] = useState(null)
@@ -43,7 +45,7 @@ export default function AppPage() {
     const clientWebcamRef = useRef(null)
     const { getUser } = useContext(UserContext)
     const user = getUser()
-
+    const navigate = useNavigate()
 
     async function getTrainingPoses() {
         const response = await api.getAllSessionsForUser(user.goals)
@@ -156,10 +158,13 @@ export default function AppPage() {
     }
 
 
-    function endSession() {
+    async function endSession() {
         saveScore()
         stopDrawing()
         setOpenFinishAnim(true)
+        await delay(1900); 
+        navigate('/')
+
     }
     function stopDrawing() {
         setIsRunning(false)
