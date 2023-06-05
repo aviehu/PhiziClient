@@ -14,6 +14,7 @@ import { calcAngles } from "../util/calc";
 import animationData from "../79952-successful.json"
 import Lottie, {LottieRefCurrentProps}from 'lottie-react'
 import DisplaySessionOptions from "../components/DisplaySessionOptions";
+import finishAnimationData from "../finishAnim.json"
 
 
 const detectorConfig = {
@@ -27,6 +28,7 @@ export default function AppPage() {
     const [isRunning, setIsRunning] = useState(false)
     const [blazePoseModel, setBlazePoseModel] = useState(null)
     const [openSuccessAnim, setOpenSuccessAnim] = useState(false)
+    const [openFinishAnim, setOpenFinishAnim] = useState(false)
     const [cameraRatio, setCameraRatio] = useState(-1)
     const [trainingPoseTimeOut, setTrainingPoseTimeOut] = useState(null)
     const [trainingPoses, setTrainingPoses] = useState(null)
@@ -98,7 +100,7 @@ export default function AppPage() {
     }, [])
 
     useEffect(() => {
-        if (!isRunning || !webcamRef.current || !blazePoseModel || !canvasRef.current || trainingPoseIndex === -1) {
+        if (!isRunning || !webcamRef.current || !blazePoseModel || !canvasRef.current || trainingPoseIndex === -1 || !trainingPoses) {
             return
         }
         let internallIsRunning = true
@@ -136,8 +138,9 @@ export default function AppPage() {
         draw()
         return () => {
             internallIsRunning = false
+            console.log("test")
         }
-    }, [isRunning, webcamRef.current, blazePoseModel, canvasRef.current, trainingPoseTimeOut])
+    }, [isRunning, webcamRef.current, blazePoseModel, canvasRef.current, trainingPoseTimeOut, trainingPoses, trainingPoseIndex])
 
     useEffect(() => {
         console.log(trainingPoseIndex)
@@ -156,19 +159,24 @@ export default function AppPage() {
     function endSession() {
         saveScore()
         stopDrawing()
+        setOpenFinishAnim(true)
     }
     function stopDrawing() {
         setIsRunning(false)
-        setTimeout(() => {setTrainingPoseIndex(0)}, 100)
+        // setTimeout(() => {setTrainingPoseIndex(0)}, 100)
     }
 
 
     const handleSuccessAnimationComplete = () => {
-        console.log("finish")
         setTimeout(() => {
           setOpenSuccessAnim(false);
         }, 1900); // Adjust the delay as needed
       };
+    const handleFinishAnimationComplete = () => {
+        setTimeout(() => {
+            setOpenFinishAnim(false);
+        }, 1900); // Adjust the delay as needed
+    };
 
     return (
         <div style={{ position: 'absolute', width: '100%', height: '90%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop:55}}>
@@ -219,7 +227,19 @@ export default function AppPage() {
                     onComplete={handleSuccessAnimationComplete}
                     />
                 </Backdrop>
-            )}        
+            )}
+            {openFinishAnim && (
+                <Backdrop
+                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={openFinishAnim}
+                >
+                    <Lottie
+                        animationData={finishAnimationData}
+                        loop={false}
+                        onComplete={handleFinishAnimationComplete}
+                    />
+                </Backdrop>
+            )}
         </div>
     )
 }
