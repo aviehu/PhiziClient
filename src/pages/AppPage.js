@@ -30,6 +30,9 @@ export default function AppPage() {
     const [trainingPoseTimeOut, setTrainingPoseTimeOut] = useState(null)
     const [trainingPoses, setTrainingPoses] = useState(null)
     const [trainingPoseIndex,setTrainingPoseIndex] = useState(0)
+    const [session ,setSession] = useState(null)
+    const [startTime ,setStartTime] = useState(null)
+
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
     const clientWebcamRef = useRef(null)
@@ -43,7 +46,16 @@ export default function AppPage() {
             return
         }
         const sessionPoses = response.sessionPoses.map((pose) => {return {...pose,poseAngles: calcAngles(pose.keypoints3D).filter((poseAngle)=> poseAngle !== -1)}})
+        setSession(response.session)
         setTrainingPoses(sessionPoses)
+    }
+
+    async function saveScore() {
+        const sessionName = session.name
+        const userEmail = user.email
+        const duration = (new Date() - startTime)/1000
+        console.log(duration)
+        await api.addScore({user: userEmail, session:sessionName, duration: duration.toFixed(2)})
     }
 
     useEffect(() => {
@@ -67,7 +79,7 @@ export default function AppPage() {
     }, [])
 
     useEffect(() => {
-        if (!isRunning || !webcamRef.current || !blazePoseModel || !canvasRef.current) {
+        if (!isRunning || !webcamRef.current || !blazePoseModel || !canvasRef.current || trainingPoseIndex === -1) {
             return
         }
         let internallIsRunning = true
@@ -87,13 +99,13 @@ export default function AppPage() {
             if(trainingPoses && matchingJoints.length === trainingPoses[trainingPoseIndex].poseAngles.length){
                 if(!trainingPoseTimeOut){
                     setTrainingPoseTimeOut(setTimeout(() => {
-                        if (trainingPoses.length === trainingPoseIndex+1) {
-                            //end session
-                            stopDrawing()
-                        } else {
+                        if (trainingPoses.length > trainingPoseIndex+1) {
                             setOpenSuccessAnim(true)
                             setTrainingPoseIndex(trainingPoseIndex+1)
                             setTrainingPoseTimeOut(null)
+                        } else {
+                            setTrainingPoseIndex(-1)
+                            internallIsRunning = false
                         }} , 2000))
                 }
             }
@@ -106,14 +118,29 @@ export default function AppPage() {
         return () => {
             internallIsRunning = false
         }
-    }, [isRunning, webcamRef.current, blazePoseModel, canvasRef.current,trainingPoseTimeOut])
+    }, [isRunning, webcamRef.current, blazePoseModel, canvasRef.current, trainingPoseTimeOut])
+
+    useEffect(() => {
+        console.log(trainingPoseIndex)
+        console.log(trainingPoses)
+        if (trainingPoses && trainingPoseIndex === -1) {
+            endSession()
+        }
+    }, [trainingPoseIndex, trainingPoses])
 
     async function startDrawing() {
         setIsRunning(true)
+        setStartTime(new Date())
     }
 
+
+    function endSession() {
+        saveScore()
+        stopDrawing()
+    }
     function stopDrawing() {
         setIsRunning(false)
+        setTimeout(() => {setTrainingPoseIndex(0)}, 100)
     }
 
 

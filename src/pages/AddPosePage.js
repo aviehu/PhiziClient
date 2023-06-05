@@ -10,7 +10,9 @@ export default function AddPosePage() {
     const [keypoints, setKeypoints] = useState([])
 
     async function submitForm() {
-        await api.addPose({name, goals, keypoints: keypoints.keypoints, keypoints3D: keypoints.keypoints3D})
+        if(keypoints !== []) {
+            await api.addPose({name, goals, keypoints: keypoints.keypoints, keypoints3D: keypoints.keypoints3D})
+        }
     }
 
     return (
