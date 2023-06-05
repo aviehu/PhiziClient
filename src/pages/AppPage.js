@@ -48,7 +48,6 @@ export default function AppPage() {
         if (response.error) {
             return
         }
-        console.log("clientsession:", response)
         setSessions(response)
     }
 
@@ -205,7 +204,7 @@ export default function AppPage() {
                 />
                 : null}
              {sessions && displaySessionOptions?
-                <DisplaySessionOptions sessions={sessions} setChosenSession={setChosenSession} setDisplaySessionOptions={setDisplaySessionOptions}/>
+                <DisplaySessionOptions sessions={sessions} setChosenSession={setChosenSession} setDisplaySessionOptions={setDisplaySessionOptions} cameraRatio={cameraRatio}/>
             : null}
             {clientWebcamRef.current && trainingPoses && trainingPoses[trainingPoseIndex] && trainingPoseIndex > -1 ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses[trainingPoseIndex].keypoints} /> : null}
             {openSuccessAnim && (
