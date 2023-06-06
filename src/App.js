@@ -7,10 +7,9 @@ import UserProvider from './hooks/UserProvider'
 import WelcomePage from './pages/WelcomePage'
 import SessionPage from "./pages/SessionPage";
 import AddPosePage from "./pages/AddPosePage";
-import ScoresPage from "./pages/ScoresPage";
 import EditUserProfile from "./components/EditUserProfile";
 import backGroundImg from "./purpleBackground.jpg"
-import ScorePage from "./pages/ScoresPage";
+import ScoresPage from "./pages/ScoresPage";
 
 import {
     BrowserRouter as Router,
@@ -44,7 +43,6 @@ function App() {
                         <Route path="/sessions" Component={SessionPage} />
                         <Route path="/scores" Component={ScoresPage} />
                         <Route path="/editUserProfile" Component={EditUserProfile} />
-                        <Route path="/scores" Component={ScorePage} />
                     </Routes>
                 </div>
                 </AppBar>
