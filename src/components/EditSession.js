@@ -38,7 +38,7 @@ export default function EditSession({editSession, setEditSession, loadSessions})
         setDescription(editSession.description)
         setDifficulty(editSession.difficulty)
         setGoals(editSession.goals)
-        setPoses(editSession.poses)
+        setSelectedPoses(editSession.poses)
     }, [])
 
     function posesOnChangeHandler(event) {

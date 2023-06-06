@@ -185,7 +185,7 @@ export default function AppPage() {
 
     return (
         <div style={{ position: 'absolute', width: '100%', height: '90%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop:55}}>
-            <Button variant={'contained'} disabled={isRunning} style={{ position: "absolute", zIndex: 10, left: 15, top: 45 }} onClick={() => startDrawing()}>
+            <Button variant={'contained'} disabled={isRunning || !chosenSession} style={{ position: "absolute", zIndex: 10, left: 15, top: 45 }} onClick={() => startDrawing()}>
                 Start Game
             </Button>
             <Button variant={'contained'} style={{ position: "absolute", zIndex: 10, right: 15, top: 45 }} color="primary" onClick={stopDrawing}>Stop</Button>
