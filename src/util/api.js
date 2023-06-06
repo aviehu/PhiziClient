@@ -168,4 +168,10 @@ api.addScore = async function (body) {
     return await response.json()
 }
 
+api.getAllScores = async function (session) {
+    const requestOptions = getRequestOptions()
+    const response = await fetch(`${serverUrl}/scores/getAllScores`, requestOptions)
+    return await response.json()
+}
+
 export default api
