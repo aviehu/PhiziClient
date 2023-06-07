@@ -13,6 +13,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 
 export default function SideBar({ setOpenSideBar, openSideBar }) {
     const {getUser} = useContext(UserContext)
+    const user = getUser()
     const navigate = useNavigate()
 
     function navigateTo(path) {
@@ -50,16 +51,8 @@ export default function SideBar({ setOpenSideBar, openSideBar }) {
                     </ListItem>
                 </List>
                 <Divider />
-                {getUser() && getUser().role === 'admin' ?
+                {user && (user.role === 'admin' || user.role === 'therapist') ?
                 <List>
-                    <ListItem key={'editProfile'} >
-                        <ListItemButton onClick={() => { navigateTo('/editUserProfile') }}>
-                            <ListItemIcon>
-                                <BorderColorIcon/>
-                            </ListItemIcon>
-                            <ListItemText primary='Edit Profile' />
-                        </ListItemButton>
-                    </ListItem>
                     <ListItem key={'register'} >
                         <ListItemButton onClick={() => { navigateTo('/register') }}>
                             <ListItemIcon>
@@ -97,21 +90,21 @@ export default function SideBar({ setOpenSideBar, openSideBar }) {
                             <ListItemIcon>
                                 <BarChartIcon/>
                             </ListItemIcon>
-                            <ListItemText primary='Scores' />
+                            <ListItemText primary='Progress' />
                         </ListItemButton>
                     </ListItem>
                 </List>
-                : getUser()? 
+                : user? 
                 <List>
-                    <ListItem key={'editProfile'} >
-                        <ListItemButton onClick={() => { navigateTo('/editUserProfile') }}>
+                    <ListItem key={'scores'} >
+                        <ListItemButton onClick={() => { navigateTo('/scores') }}>
                             <ListItemIcon>
-                                <BorderColorIcon/>
+                                <BarChartIcon/>
                             </ListItemIcon>
-                            <ListItemText primary='Edit Profile' />
+                            <ListItemText primary='Progress' />
                         </ListItemButton>
                     </ListItem>
-                </List>
+                </List> 
                 : null}
                 
             </Box>

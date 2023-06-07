@@ -1,21 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext,useState, useEffect } from 'react';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
     Stack,
     Select,
     FormControl,
     InputLabel,
-    MenuItem, TablePagination,
+    MenuItem,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import api from '../util/api';
+import UserContext from "../context/UserContext";
+import ProgressChart from '../components/ProgressChart';
 
 const CustomizedSelect = styled(Select)`
 background-color:  rgba(255,255,255,0.14);
@@ -25,6 +20,8 @@ color: black;
 `;
 
 export default function ScoreTable() {
+    const { getUser } = useContext(UserContext)
+    const user = getUser()
     const [scores, setScores] = useState(null);
     const [users, setUsers] = useState(null);
     const [sessions, setSessions] = useState(null);
@@ -32,23 +29,24 @@ export default function ScoreTable() {
     const [selectedSession, setSelectedSession] = useState('');
     const [selectedMonth, setSelectedMonth] = useState('');
     const [selectedYear, setSelectedYear] = useState('');
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [filteredScores,setFilteredScores] = useState([]);
 
-    const handleChangePage = (newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
-
     useEffect(() => {
-        api.getAllScores().then((data) => setScores(data));
-        api.getAllUsers().then((data) => setUsers(data));
-        api.getAllSessions().then((data) => setSessions(data));
+        async function load(){
+          if(user.role === 'client'){
+            setSelectedUser(user.email)
+          }
+          else if(user.role === 'admin'){
+            const myUsers = await api.getAllUsers()
+            setUsers(myUsers)
+          }
+          else{
+            const userName = user.name
+            const myUsers = await api.getTherapistUsers({superior: userName})
+            setUsers(myUsers)
+          }
+        }
+        load()
     }, []);
 
     useEffect(() => {
@@ -58,9 +56,12 @@ export default function ScoreTable() {
         async function handleSelectUserChange(){
           const userScores = await api.getUserScores(selectedUser)
           setScores(userScores)
+          const sessionsSet = new Set()
+          userScores.map((score) => sessionsSet.add(score.session))
+          setSessions([...sessionsSet])
+          console.log("sessions: ", [...sessionsSet])
         }
         handleSelectUserChange()
-        setPage(0);
     }, [selectedUser]);
 
     useEffect(() =>{
@@ -72,7 +73,9 @@ export default function ScoreTable() {
           if (selectedYear && scoreDate.getFullYear() !== parseInt(selectedYear)) return false;
           if(selectedSession && score.session !== selectedSession) return false
           return true;
-      });
+          }).sort((first, second) =>
+               new Date(first.date).getTime() - new Date(second.date).getTime()
+            )
         setFilteredScores(filtered)
       }
     },[scores,selectedMonth,selectedYear,selectedSession])
@@ -89,24 +92,27 @@ export default function ScoreTable() {
         <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%",justifySelf:'center' , alignItems:'center' }}>
           <Stack style={{ alignItems: "center",width:'100%'}} direction="column" spacing={3}>
             <Stack style={{ width:'50%'}} direction="row" spacing={1}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">User</InputLabel>
-              <CustomizedSelect
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={selectedUser}
-                  label="User"
-                  onChange={(e) => setSelectedUser(e.target.value)}
-                  displayEmpty
+            {user && user.role !== 'client'?
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">User</InputLabel>
+                <CustomizedSelect
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={selectedUser}
+                    label="User"
+                    onChange={(e) => setSelectedUser(e.target.value)}
+                    displayEmpty
 
-              >
-                  {users && users.map((user) => (
-                      <MenuItem key={user.name} value={user.email}>
-                          {user.name}
-                      </MenuItem>
-                  ))}
-              </CustomizedSelect>
-            </FormControl>
+                >
+                    {users && users.map((user) => (
+                        <MenuItem key={user.name} value={user.email}>
+                            {user.name}
+                        </MenuItem>
+                    ))}
+                </CustomizedSelect>
+              </FormControl>
+            :null}
+            
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Session</InputLabel>
               <CustomizedSelect
@@ -118,8 +124,8 @@ export default function ScoreTable() {
                   
               >
                   {sessions && sessions.map((session) => (
-                      <MenuItem key={session.name} value={session.name}>
-                          {session.name}
+                      <MenuItem key={session} value={session}>
+                          {session}
                       </MenuItem>
                   ))}
               </CustomizedSelect>
@@ -161,15 +167,8 @@ export default function ScoreTable() {
             </Stack>
             <Stack>
             {filteredScores &&
-             <LineChart width={650} height={350} data={filteredScores}>
-                <XAxis dataKey="date"
-                       stroke='rgba(255,255,255,0.8)'
-                       tickFormatter={(date) => new Date(date).toLocaleDateString()}/>
-                <YAxis stroke='rgba(255,255,255,0.8)' />
-                <CartesianGrid strokeDasharray="3 3" stroke='rgba(255,255,255,0.9)' fill='rgba(255,255,255,0.7)'/>
-                <Tooltip wrapperStyle={{color: 'black'}} />
-                <Line type="monotone" dataKey="duration" stroke="#CB67D4" strokeWidth={3} dot={{ fill: '#FFFFFF', strokeWidth: 2 }} />
-            </LineChart>}
+              <ProgressChart filteredScores={filteredScores}/>
+             }
           </Stack>
             </Stack>
         </div>

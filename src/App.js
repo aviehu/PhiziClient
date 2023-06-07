@@ -43,6 +43,7 @@ function App() {
                         <Route path="/sessions" Component={SessionPage} />
                         <Route path="/scores" Component={ScoresPage} />
                         <Route path="/editUserProfile" Component={EditUserProfile} />
+                        <Route path="/users/:userEmail" Component={EditUserProfile} />
                     </Routes>
                 </div>
                 </AppBar>
