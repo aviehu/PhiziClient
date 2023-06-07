@@ -146,10 +146,10 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
                 </Alert>
             </Snackbar>
             <Paper variant='elevation' elevation={10} style={{ borderRadius:'5%', backgroundColor:'rgba(255,255,255,0.95)', padding: 100, display: 'flex', justifyContent: "center", alignItems: "center", height: "40%", width: "30%" }}>
-                <Stack direction="column" spacing={2} style={{ textAlign: "center" }}>
-                        <h1 style={{ paddingBottom: 2.5}}>Add Pose</h1>
-                        <TextField label="Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
-                        <FormControl sx={{ m: 1 }}>
+                <Stack direction="column" spacing={3} style={{ alignItems:'center',textAlign: "center" }}>
+                        <h1 style={{  backgroundColor: "rgba(0,0,0,0.12)", borderRadius:4, width:'60%',textAlign:'center', color:'rgba(0,0,1,0.5)', boxShadow:'1px 2px 4px #999'}}>Add Pose</h1>
+                        <TextField label="Name" value={name} onChange={(event) => setName(event.target.value)} fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%', width:'85%'}}></TextField>
+                        <FormControl sx={{ m: 1 }} fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%', width:'85%'}}>
                             <InputLabel id="demo-multiple-checkbox-label">Goals</InputLabel>
                             <Select
                                 labelId="demo-multiple-checkbox-label"

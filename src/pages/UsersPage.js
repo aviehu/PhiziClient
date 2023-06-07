@@ -59,7 +59,7 @@ export default function UsersPage() {
     
 
     return (
-        <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%", alignContent:'center', justifyContent: "center", alignItems: "center" }}>
+        <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%", alignContent:'center', justifyContent: "center", alignItems: "center", justifySelf:"center"}}>
                 {usersList ? <UsersTable usersList={usersList} handleGoals={handleGoals} goalsProps = {goalsProps} goalsNames={goalsNames} handleDeleteUser={handleDeleteUser} /> : []}
         </div>
     )

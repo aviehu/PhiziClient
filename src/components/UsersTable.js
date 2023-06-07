@@ -14,7 +14,7 @@ import api from "../util/api";
 
 export default function SessionsTable({ usersList, handleGoals,goalsProps,goalsNames,handleDeleteUser }) {
     const [page, setPage] = useState(0);
-    const rowsPerPage = 5
+    const rowsPerPage = 4
     const navigate = useNavigate()
 
     function handleEditUser(user){

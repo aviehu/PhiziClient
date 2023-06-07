@@ -68,24 +68,28 @@ export default function EditUserProfile() {
                     Profile saved successfully
                 </Alert>
             </Snackbar>
-            <Paper variant='elevation' elevation={10} style={{borderRadius:'5%', backgroundColor:'rgba(255,255,255,0.95)', display: "flex", height: "75%", width: "55%", justifyContent: "center", alignItems: "center"}}>
-                <Stack style={{ textAlign: "center" }} direction="column" spacing={3}>
-                    <h1 style={{ paddingBottom: 4 }}>Edit Profile</h1>
+            <Paper variant='elevation' elevation={10} style={{borderRadius:'5%', backgroundColor:'rgba(255,255,255)', display: "flex", height: "59%", width: "47%", justifyContent: "center", alignItems: "center"}}>
+                <Stack direction="column" spacing={4}>
+                    <Stack style={{alignItems:'center'}}>
+                    <h1 style={{  backgroundColor: "rgba(0,0,0,0.12)", borderRadius:4, width:'40%',textAlign:'center', color:'rgba(0,0,1,0.5)', boxShadow:'1px 2px 4px #999'}}>Edit Profile</h1>
+                    </Stack>
+                    
                     <Stack direction={'row'} spacing={3}>
-                        <TextField key="firstName" label="First Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
-                        <TextField key="lastName" label="Last Name" value={lastName} onChange={(event) => setLastName(event.target.value)}></TextField>
+                        <TextField key="firstName" label="First Name" value={name} onChange={(event) => setName(event.target.value)} style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
+                        <TextField key="lastName" label="Last Name" value={lastName} onChange={(event) => setLastName(event.target.value)} style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
                     </Stack>
                     {openBMI && 
                     <Stack direction={'row'} spacing={3}>
-                        <TextField key="weight" label="Weight (Kg)" value={weight} onChange={(event) => setWeight(event.target.value)}></TextField>
-                        <TextField key="height" label="Height (Cm)" value={height} onChange={(event) => setHeight(event.target.value)}></TextField>
+                        <TextField key="weight" label="Weight (Kg)" value={weight} onChange={(event) => setWeight(event.target.value)} style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
+                        <TextField key="height" label="Height (Cm)" value={height} onChange={(event) => setHeight(event.target.value)} style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
                     </Stack>
                     }
                     <Stack  direction={'row'} spacing={3}>
-                        <TextField key="age" label="Age" value={age} onChange={(event) => setAge(event.target.value)}></TextField>
+                        <TextField fullWidth key="age" label="Age" value={age} onChange={(event) => setAge(event.target.value)} style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
                         <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Role</InputLabel>
                                     <Select
+                                        style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select-role"
                                         value={role}

@@ -27,11 +27,11 @@ export default function LoginPage() {
 
     return (
         <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
-            <Paper variant='elevation' elevation={10} style={{borderRadius:'5%', backgroundColor:'rgba(255,255,255,0.95)', display: "flex", height: "60%", width: "50%", justifyContent: "center", alignItems: "center" }}>
-                <Stack style={{ textAlign: "center", width: '40%'}} direction="column" spacing={3}>
-                    <h1 style={{ paddingBottom: 4 }}>Login</h1>
-                    <TextField label="Email" value={email} onChange={(event) => setEmail(event.target.value)} ></TextField>
-                    <TextField type={"password"} label="Password" value={password} onChange={(event) => setPassword(event.target.value)}></TextField>
+            <Paper variant='elevation' elevation={10} style={{borderRadius:'5%', backgroundColor:'rgba(255,255,255,0.95)', display: "flex", height: "60%", width: "46%", justifyContent: "center", alignItems: "center" }}>
+                <Stack style={{  alignItems:'center',textAlign: "center", width: '80%'}} direction="column" spacing={3}>
+                    <h1 style={{  backgroundColor: "rgba(0,0,0,0.12)", borderRadius:4, width:'30%',textAlign:'center', color:'rgba(0,0,1,0.5)', boxShadow:'1px 2px 4px #999'}}>Login</h1>
+                    <TextField label="Email" value={email} onChange={(event) => setEmail(event.target.value)} style={{boxShadow:'1px 1px #999', borderRadius:'5%', width:'60%'}}></TextField>
+                    <TextField type={"password"} label="Password" value={password} onChange={(event) => setPassword(event.target.value)} style={{boxShadow:'1px 1px #999', borderRadius:'5%', width:'60%'}}></TextField>
                     
                         
                         
@@ -42,7 +42,7 @@ export default function LoginPage() {
                         </Stack>
                         :
                         <Stack alignItems={'center'}>
-                            <Button onClick={handleLogin}>Login</Button>
+                            <Button onClick={handleLogin} >Login</Button>
                         </Stack> }
                     
                 </Stack>
