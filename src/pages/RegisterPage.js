@@ -4,8 +4,6 @@ import {
     Paper,
     Stack,
     TextField,
-    Slider,
-    Typography,
     FormControl,
     InputLabel,
     Select,
@@ -20,15 +18,18 @@ import UserContext from "../context/UserContext";
 
 export default function RegisterPage() {
     const delay = ms => new Promise(res => setTimeout(res, ms));
+    const [openBMI,setOpenBMI] = useState(false)
     const [openSnackBar, setOpenSnackBar] = useState(false)
-    const [name, setName] = useState("")
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [age, setAge] = useState()
-    const [height, setHeight] = useState()
-    const [weight, setWeight] = useState()
+    const [age, setAge] = useState("")
+    const [height, setHeight] = useState(null)
+    const [weight, setWeight] = useState(null)
     const [role, setRole] = useState()
-    const { user } = useContext(UserContext)
+    const { getUser } = useContext(UserContext)
+    const user = getUser()
 
     const navigate = useNavigate()
 
@@ -43,7 +44,8 @@ export default function RegisterPage() {
     const handleRegister = async () => {
         const bmi = weight / (height / 100)
         const goals = []
-        const response = api.register({ name, email, password, age, weight, height, goals, bmi })
+        const superior = user.name
+        const response = api.register({ name: firstName, lastName, email, password, age, weight, height, goals, bmi, role, superior})
         if (!response.error) {
             setOpenSnackBar(true)
             await delay(2000); 
@@ -76,13 +78,13 @@ export default function RegisterPage() {
                         <TextField key="password" type={"password"} label="Password" value={password} onChange={(event) => setPassword(event.target.value)}></TextField>
                     </Stack>
                     <Stack direction={'row'} spacing={3}>
-                        <TextField key="Name" label="Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
-                        <TextField key="age" label="Age" value={age} onChange={(event) => setAge(event.target.value)}></TextField>
+                        <TextField key="firstName" label="First Name" value={firstName} onChange={(event) => setFirstName(event.target.value)}></TextField>
+                        <TextField key="lastName" label="Last Name" value={lastName} onChange={(event) => setLastName(event.target.value)}></TextField>
                     </Stack>
                     <Stack direction={'row'} spacing={3}>
-                        <TextField key="weight" label="Weight" value={weight} onChange={(event) => setWeight(event.target.value)}></TextField>
-                        {
-                            user && user.role === 'admin' ?
+                    <TextField key="age" label="Age" value={age} onChange={(event) => setAge(event.target.value)}></TextField>
+                    {
+                            user && (user.role === 'admin' || user.role === 'therapist') ?
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Role</InputLabel>
                                     <Select
@@ -90,32 +92,37 @@ export default function RegisterPage() {
                                         id="demo-simple-select-role"
                                         value={role}
                                         label="Age"
-                                        onChange={(event) => { setRole(event.target.value)}}
-                                    >
+                                        onChange={(event) => { 
+                                            const chosenRole = event.target.value
+                                            setRole(chosenRole)
+                                            if(chosenRole === 'client'){
+                                                setOpenBMI(true)
+                                            }
+                                            else{
+                                                setOpenBMI(false)
+                                                setHeight(null)
+                                                setWeight(null)
+                                            }
+                                            }}
+                                        >
+                                        {user.role === 'admin' ? 
                                         <MenuItem value={'admin'}>Admin</MenuItem>
+                                        : null}
                                         <MenuItem value={'therapist'}>Therapist</MenuItem>
+                                        <MenuItem value={'client'}>Client</MenuItem>
                                     </Select>
                                 </FormControl> :
                                 null
                         }
                     </Stack>
-                    <Stack style={{ textAlign: "center" }} direction="row" spacing={2}>
-                        <Typography>
-                            Height:
-                        </Typography>
-                        <Slider
-                            value={height}
-                            min={30}
-                            step={1}
-                            max={250}
-                            getAriaValueText={valueLabelFormat}
-                            valueLabelFormat={valueLabelFormat}
-                            onChange={(event) => setHeight(event.target.value)}
-                            valueLabelDisplay="auto"
-                        />
+                    {openBMI?
+                        <Stack direction={'row'} spacing={3}>
+                        <TextField key="weight" label="Weight (Kg)" value={weight} onChange={(event) => setWeight(event.target.value)}></TextField>
+                        <TextField key="height" label="Height (Cm)" value={height} onChange={(event) => setHeight(event.target.value)}></TextField>
                     </Stack>
+                    :null}
                     <Stack justifyContent={"space-between"} direction="row" spacing={3}>
-                        <Button disabled={!name || !email || !password} onClick={handleRegister}>Register</Button>
+                        <Button disabled={!firstName || !lastName || !email || !password} onClick={handleRegister}>Register</Button>
                         <Button onClick={handleBack}>Back</Button>
                     </Stack>
                 </Stack>

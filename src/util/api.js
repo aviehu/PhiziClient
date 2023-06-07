@@ -57,6 +57,18 @@ api.updateUser = async function (body) {
     return await response.json()
 }
 
+api.getTherapistUsers = async function (superior) {
+    const requestOptions = postRequestOptions(superior)
+    const response = await fetch(`${serverUrl}/users/getTherapistUsers`, requestOptions)
+    return await response.json()
+}
+
+api.deleteUser = async function (id) {
+    const requestOptions = deleteRequestOptions()
+    const response = await fetch(`${serverUrl}/users/deleteUser/${id}`, requestOptions)
+    return await response.json()
+}
+
 
 // Sessions API
 

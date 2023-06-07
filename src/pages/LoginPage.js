@@ -15,7 +15,7 @@ export default function LoginPage() {
         const response = await api.login({ email, password })
         if (!response.error) {
             setUser(response)
-            navigate('/app')
+            navigate('/')
             return
         }
         alert(response.error)

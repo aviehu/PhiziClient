@@ -3,7 +3,7 @@ import { sampledVideoWidth } from "../util/envVars";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as mpPose from "@mediapipe/pose";
 import Webcam from "react-webcam";
-import {Backdrop, Button} from "@mui/material";
+import {Backdrop, Button,Stack} from "@mui/material";
 import getCameraRatio from "../util/getCameraRatio";
 import { useNavigate } from "react-router-dom";
 import { clearCanvas, drawUserSkeleton } from '../util/canvas'
@@ -16,6 +16,7 @@ import animationData from "../79952-successful.json"
 import Lottie, {LottieRefCurrentProps}from 'lottie-react'
 import DisplaySessionOptions from "../components/DisplaySessionOptions";
 import finishAnimationData from "../finishAnim.json"
+import ProgressGameBar from "../components/ProgressGameBar";
 
 
 const detectorConfig = {
@@ -39,6 +40,7 @@ export default function AppPage() {
     const [sessions ,setSessions] = useState(null)
     const [startTime ,setStartTime] = useState(null)
     const [chosenSession ,setChosenSession] = useState(null)
+    const [posesNames, setPosesNames] = useState(null)
 
     const canvasRef = useRef(null)
     const webcamRef = useRef(null)
@@ -85,6 +87,8 @@ export default function AppPage() {
             }
             const sessionPoses = response.sessionPoses.map((pose) => {return {...pose,poseAngles: calcAngles(pose.keypoints3D).filter((poseAngle)=> poseAngle !== -1)}})
             setTrainingPoses(sessionPoses)
+            const names = sessionPoses.map((pose) => pose.name)
+            setPosesNames(names)
         }
         loadSessionPoses()
     }, [chosenSession])
@@ -184,67 +188,73 @@ export default function AppPage() {
     };
 
     return (
-        <div style={{ position: 'absolute', width: '100%', height: '90%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop:55}}>
-            <Button variant={'contained'} disabled={isRunning || !chosenSession} style={{ position: "absolute", zIndex: 10, left: 15, top: 45 }} onClick={() => startDrawing()}>
-                Start Game
-            </Button>
-            <Button variant={'contained'} style={{ position: "absolute", zIndex: 10, right: 15, top: 45 }} color="primary" onClick={stopDrawing}>Stop</Button>
-           
-            <Webcam
-                ref={webcamRef}
-                style={{ zIndex: -1, position: "absolute", left: 0, top: 0 }}
-                mirrored={true}
-                videoConstraints={{ facingMode: "user", width: sampledVideoWidth, height: sampledVideoWidth / cameraRatio, }}
-                width={250}
-                height={250 / cameraRatio}
-            >
-            </Webcam>
-            {cameraRatio > 0 ?
+        <Stack style={{ alignItems: "center",width:'100%', justifyContent:"flex-start", paddingTop:'0.5%'}} direction="column" spacing={8}>
+            <div style={{ position: 'absolute', width: '100%', height: '90%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop:55}}>
+                <Button variant={'contained'} disabled={isRunning || !chosenSession} style={{ position: "absolute", zIndex: 10, left: 15, top: 45 }} onClick={() => startDrawing()}>
+                    Start Game
+                </Button>
+                <Button variant={'contained'} style={{ position: "absolute", zIndex: 10, right: 15, top: 45 }} color="primary" onClick={stopDrawing}>Stop</Button>
+            
                 <Webcam
-                    ref={clientWebcamRef}
-                    style={{ borderRadius:'1%',zIndex: 1, width: 650, height: 650 / cameraRatio }}
+                    ref={webcamRef}
+                    style={{ zIndex: -1, position: "absolute", left: 0, top: 0 }}
                     mirrored={true}
+                    videoConstraints={{ facingMode: "user", width: sampledVideoWidth, height: sampledVideoWidth / cameraRatio, }}
+                    width={250}
+                    height={250 / cameraRatio}
                 >
                 </Webcam>
-                : null
-            }
-            {clientWebcamRef.current ?
-                <canvas
-                    width={`${sampledVideoWidth}px`}
-                    height={`${sampledVideoWidth / cameraRatio}px`}
-                    ref={canvasRef}
-                    style={{ zIndex: 5, width: 650, height: 650 / cameraRatio, marginLeft: -650}}
-                />
+                {cameraRatio > 0 ?
+                    <Webcam
+                        ref={clientWebcamRef}
+                        style={{ borderRadius:'1%',zIndex: 1, width: 650, height: 650 / cameraRatio }}
+                        mirrored={true}
+                    >
+                    </Webcam>
+                    : null
+                }
+                {clientWebcamRef.current ?
+                    <canvas
+                        width={`${sampledVideoWidth}px`}
+                        height={`${sampledVideoWidth / cameraRatio}px`}
+                        ref={canvasRef}
+                        style={{ zIndex: 5, width: 650, height: 650 / cameraRatio, marginLeft: -650}}
+                    />
+                    : null}
+                {sessions && displaySessionOptions?
+                    <DisplaySessionOptions sessions={sessions} setChosenSession={setChosenSession} setDisplaySessionOptions={setDisplaySessionOptions} cameraRatio={cameraRatio}/>
                 : null}
-             {sessions && displaySessionOptions?
-                <DisplaySessionOptions sessions={sessions} setChosenSession={setChosenSession} setDisplaySessionOptions={setDisplaySessionOptions} cameraRatio={cameraRatio}/>
-            : null}
-            {clientWebcamRef.current && trainingPoses && trainingPoses[trainingPoseIndex] && trainingPoseIndex > -1 ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses[trainingPoseIndex].keypoints} /> : null}
-            {openSuccessAnim && (
-                <Backdrop
-                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={openSuccessAnim}
-                >              
-                    <Lottie
-                    lottieRef={successAnimRef}
-                    animationData={animationData}
-                    loop={false}
-                    onComplete={handleSuccessAnimationComplete}
-                    />
-                </Backdrop>
-            )}
-            {openFinishAnim && (
-                <Backdrop
+                {clientWebcamRef.current && trainingPoses && trainingPoses[trainingPoseIndex] && trainingPoseIndex > -1 ? <PoseMatchingCanvas cameraRatio={cameraRatio} targetPose={trainingPoses[trainingPoseIndex].keypoints} /> : null}
+                {openSuccessAnim && (
+                    <Backdrop
                     sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                    open={openFinishAnim}
-                >
-                    <Lottie
-                        animationData={finishAnimationData}
+                    open={openSuccessAnim}
+                    >              
+                        <Lottie
+                        lottieRef={successAnimRef}
+                        animationData={animationData}
                         loop={false}
-                        onComplete={handleFinishAnimationComplete}
-                    />
-                </Backdrop>
-            )}
-        </div>
+                        onComplete={handleSuccessAnimationComplete}
+                        />
+                    </Backdrop>
+                )}
+                {openFinishAnim && (
+                    <Backdrop
+                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                        open={openFinishAnim}
+                    >
+                        <Lottie
+                            animationData={finishAnimationData}
+                            loop={false}
+                            onComplete={handleFinishAnimationComplete}
+                        />
+                    </Backdrop>
+                )}
+            </div>
+            <div>
+
+            {trainingPoseIndex > -1 && posesNames && <ProgressGameBar activeStep={trainingPoseIndex} posesNames={posesNames}/>}
+            </div>
+        </Stack>
     )
 }

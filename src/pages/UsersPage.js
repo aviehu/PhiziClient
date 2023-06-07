@@ -1,6 +1,8 @@
-import { useState, useEffect} from "react";
+import { useContext, useState, useEffect} from "react";
 import api from "../util/api";
 import UsersTable from "../components/UsersTable"
+import UserContext from "../context/UserContext";
+
 
 
 const ITEM_HEIGHT = 48
@@ -17,16 +19,28 @@ const ITEM_PADDING_TOP = 8
       }
 
 export default function UsersPage() {
+    const { getUser } = useContext(UserContext)
+    const user = getUser()
     const [usersList, setUsersList] = useState([])
-    
-    async function load() {
-        const response = await api.getAllUsers()
-        if (!response.error) {
-            setUsersList(response)
-            return
-        }
-        alert(response.error)
+    const roleToNum = {'admin':1, 'therapist':2, 'client':3}
 
+    async function handleDeleteUser(id) {
+        await api.deleteUser(id)
+        await load()
+      }
+
+    async function load() {
+        if(user.role === 'admin'){
+            let myUsers = await api.getAllUsers()
+            myUsers = myUsers.sort((first,second)=> roleToNum[first.role] -  roleToNum[second.role])
+            setUsersList(myUsers)
+          }
+        else{
+        const userName = user.name
+        let myUsers = await api.getTherapistUsers({superior: userName})
+        myUsers = myUsers.sort((first,second)=> roleToNum[first.role] -  roleToNum[second.role])
+        setUsersList(myUsers)
+        }
     }
 
     
@@ -46,7 +60,7 @@ export default function UsersPage() {
 
     return (
         <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%", alignContent:'center', justifyContent: "center", alignItems: "center" }}>
-                {usersList ? <UsersTable usersList={usersList} handleGoals={handleGoals} goalsProps = {goalsProps} goalsNames={goalsNames} /> : []}
+                {usersList ? <UsersTable usersList={usersList} handleGoals={handleGoals} goalsProps = {goalsProps} goalsNames={goalsNames} handleDeleteUser={handleDeleteUser} /> : []}
         </div>
     )
 }

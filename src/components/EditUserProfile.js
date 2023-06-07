@@ -1,24 +1,27 @@
 import {useContext, useState, useEffect} from "react";
-import {Button,Paper,Stack,TextField,Slider,Typography,Slide,Snackbar,Alert} from "@mui/material";
+import {Button,Paper,Stack,TextField,MenuItem,FormControl,InputLabel,Select,Typography,Slide,Snackbar,Alert} from "@mui/material";
 import api from "../util/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import UserContext from "../context/UserContext";
 
 export default function EditUserProfile() {
+    const {userEmail} = useParams()
     const delay = ms => new Promise(res => setTimeout(res, ms));
     const [name, setName] = useState("")
+    const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
     const [age, setAge] = useState("")
+    const [role, setRole] = useState("")
+    const [openBMI, setOpenBMI] = useState(false)
     const [height, setHeight] = useState(0)
     const [weight, setWeight] = useState(0)
     const [openSnackBar, setOpenSnackBar] = useState(false)
-    const { getUser } = useContext(UserContext)
-
+    const [user, setUser] = useState(null)
     const navigate = useNavigate()
 
     const handleEditProfile = async () => {
         const bmi = weight / (height / 100)
-        const response = api.updateUser({ name, email, age, weight, height, bmi })
+        const response = api.updateUser({ name, lastName, email, age, weight, height, bmi })
         if (!response.error) {
             setOpenSnackBar(true)
             await delay(2000); 
@@ -36,12 +39,18 @@ export default function EditUserProfile() {
 
     useEffect(() => {
         async function load() {
-            const user = getUser()
+            const user = await api.getUser(userEmail)
+            setUser(user)
             setName(user.name)
+            setLastName(user.lastName)
             setAge(user.age)
             setEmail(user.email)
             setHeight(user.height)
             setWeight(user.weight)
+            setRole(user.role)
+            if(user.role === 'client'){
+                setOpenBMI(true)
+            }
         }
         load()
     }, [])
@@ -63,29 +72,48 @@ export default function EditUserProfile() {
                 <Stack style={{ textAlign: "center" }} direction="column" spacing={3}>
                     <h1 style={{ paddingBottom: 4 }}>Edit Profile</h1>
                     <Stack direction={'row'} spacing={3}>
-                        <TextField key="Name" label="Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
-                        <TextField key="age" label="Age" value={age} onChange={(event) => setAge(event.target.value)}></TextField>
+                        <TextField key="firstName" label="First Name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
+                        <TextField key="lastName" label="Last Name" value={lastName} onChange={(event) => setLastName(event.target.value)}></TextField>
                     </Stack>
+                    {openBMI && 
                     <Stack direction={'row'} spacing={3}>
-                        <TextField key="weight" label="Weight" value={weight} onChange={(event) => setWeight(event.target.value)}></TextField>
+                        <TextField key="weight" label="Weight (Kg)" value={weight} onChange={(event) => setWeight(event.target.value)}></TextField>
+                        <TextField key="height" label="Height (Cm)" value={height} onChange={(event) => setHeight(event.target.value)}></TextField>
                     </Stack>
-                    <Stack style={{ textAlign: "center" }} direction="row" spacing={2}>
-                        <Typography>
-                            Height:
-                        </Typography>
-                        <Slider
-                            value={height}
-                            min={30}
-                            step={1}
-                            max={250}
-                            getAriaValueText={valueLabelFormat}
-                            valueLabelFormat={valueLabelFormat}
-                            onChange={(event) => setHeight(event.target.value)}
-                            valueLabelDisplay="auto"
-                        />
+                    }
+                    <Stack  direction={'row'} spacing={3}>
+                        <TextField key="age" label="Age" value={age} onChange={(event) => setAge(event.target.value)}></TextField>
+                        <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Role</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select-role"
+                                        value={role}
+                                        label="Age"
+                                        onChange={(event) => { 
+                                            const chosenRole = event.target.value
+                                            setRole(chosenRole)
+                                            if(chosenRole === 'client'){
+                                                setOpenBMI(true)
+                                            }
+                                            else{
+                                                setOpenBMI(false)
+                                                setHeight(null)
+                                                setWeight(null)
+                                            }
+                                            }}
+                                        >
+                                        {user && user.role === 'admin' ? 
+                                        <MenuItem value={'admin'}>Admin</MenuItem>
+                                        : null}
+                                        <MenuItem value={'therapist'}>Therapist</MenuItem>
+                                        <MenuItem value={'client'}>Client</MenuItem>
+                                    </Select>
+                                </FormControl>
                     </Stack>
+                    
                     <Stack alignItems={'center'}>
-                        <Button disabled={!name || !height || !weight} onClick={() => {
+                        <Button disabled={!name} onClick={() => {
                         handleEditProfile()
                         }}>Save</Button>
                     </Stack>
