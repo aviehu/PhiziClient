@@ -49,19 +49,21 @@ export default function AddSession({openAddSession, setOpenAddSession, loadSessi
         <Dialog
             open={openAddSession}
             onClose={() => setOpenAddSession(false)}
+            maxWidth="md"
         >
-            <DialogTitle>Add New Session</DialogTitle>
+            <Stack  spacing={1.5} style={{alignItems:'center', padding:'3%',marginTop:'4%'}}>
+            <DialogTitle style={{  backgroundColor: "rgba(0,0,0,0.12)", borderRadius:7, width:'55%', textAlign:'center', color:'rgba(0,0,1,0.5)', boxShadow:'1px 2px 4px #999'}}>Add New Session</DialogTitle>
             <DialogContent>
                     <Stack paddingTop={2} direction={'column'} spacing={2}>
                         <Stack direction={'row'} spacing={2}>
-                            <TextField value={name} onChange={(event) => setName(event.target.value)} label='Name'></TextField>
-                            <TextField type={'number'} value={difficulty} onChange={(event) => setDifficulty(event.target.value)} label='Difficulty'></TextField>
+                            <TextField value={name} onChange={(event) => setName(event.target.value)} label='Name' style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
+                            <TextField type={'number'} value={difficulty} onChange={(event) => setDifficulty(event.target.value)} label='Difficulty' style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
                         </Stack>
                         <Stack direction={'row'} spacing={2}>
-                            <TextField value={description} onChange={(event) => setDescription(event.target.value)} fullWidth={true} label='description'></TextField>
+                            <TextField value={description} onChange={(event) => setDescription(event.target.value)} fullWidth={true} label='description' style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
                         </Stack>
                         <Stack direction={'row'} spacing={2}>
-                            <FormControl fullWidth>
+                            <FormControl fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}>
                                 <InputLabel id="demo-simple-select-label">Goals</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -83,7 +85,7 @@ export default function AddSession({openAddSession, setOpenAddSession, loadSessi
                                 </Select>
                             </FormControl>                        </Stack>
                         <Stack direction={'row'} spacing={2}>
-                            <FormControl fullWidth>
+                            <FormControl fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}>
                                 <InputLabel id="demo-simple-select-label">Poses</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -111,6 +113,7 @@ export default function AddSession({openAddSession, setOpenAddSession, loadSessi
                 <Button onClick={addSessionHandler}>Add</Button>
                 <Button onClick={() => setOpenAddSession(false)}>Cancel</Button>
             </DialogActions>
+            </Stack>
         </Dialog>
     )
 }

@@ -5,7 +5,7 @@ import title from "../welcomTitle.png"
 
 export default function WelcomePage() {
     return (
-        <div style={{ position: 'absolute', width: '100%', height: '90%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop:40}}>
+        <div style={{ position: 'absolute', width: '100%', height: '80%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop:'5%'}}>
             <Stack spacing={-15} alignItems={'center'}>
                 <img src={title} alt="title"/>
                     <Lottie

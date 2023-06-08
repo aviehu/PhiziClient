@@ -32,7 +32,7 @@ export default function SessionsTable({ sessions, handleDelete, setEditSession }
       }));
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} style={{width:'100%',overflow:'auto'}}>
                     <Table sx={{ minWidth: 700 }} aria-label="customized table">
                         <TableHead>
                         <TableRow>

@@ -2,6 +2,8 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import { Fragment } from 'react';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -10,11 +12,14 @@ import SideBar from "./SideBar";
 import {useNavigate} from "react-router-dom";
 import UserContext from "../context/UserContext";
 import LogoutIcon from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
+import Divider from '@mui/material/Divider';
 
 export default function PhiziAppBar({children}) {
   const { getUser,setUser } = useContext(UserContext)
   const [openSideBar, setOpenSideBar] = useState(false)
   const navigate = useNavigate()
+  const user = getUser()
 
   function handleLogout() {
     setOpenSideBar(false)
@@ -30,21 +35,35 @@ export default function PhiziAppBar({children}) {
       <div style={{position: 'absolute',backgroundColor: 'white', width: '100%', height: '100%'}}>
           <AppBar position= "fixed" style={{background: "rgba(16, 16, 16, 0.7)"} }>
               <Toolbar>
-                {getUser()?
+                {user?
+                <Fragment>
                   <IconButton
                       size="large"
                       edge="start"
                       color="inherit"
                       aria-label="menu"
-                      sx={{ mr: 2 }}
                       onClick={() => { setOpenSideBar(true) }}
                   >
                     <MenuIcon />
                   </IconButton>
-                  : null}
-                  <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                      Phizzi App
+                  <Typography
+                      type="title"
+                      color="inherit"
+                      style={{ borderRight: '0.1em solid rgba(255,255,255,0.4)',padding:'0.1em', paddingRight:'12px', paddingTop:'32px' }}
+                  />
+                  <PersonIcon sx={{ paddingLeft:1.8 }} />
+                  <Typography variant="h6" component="div" sx={{ flexGrow: 1, paddingLeft:1.3 }} >
+                      {user.name}
                   </Typography>
+                  </Fragment>
+                  : 
+                  <Typography variant="h6" component="div" sx={{ flexGrow: 1, paddingLeft:1.3 }} >
+                  Phizzi App
+                 </Typography>}
+                        
+                    
+                  
+                  
                   {getUser()? <Button onClick={handleLogout} color="inherit"><LogoutIcon/></Button>
                   : <Button onClick={handleLogin} color="inherit">Login</Button>}
                 </Toolbar>

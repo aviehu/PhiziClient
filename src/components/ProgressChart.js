@@ -1,9 +1,9 @@
 import React, { useContext,useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,Legend } from 'recharts';
 
 export default function ProgressChart({filteredScores}){
     return(
-        <LineChart width={650} height={350} data={filteredScores}>
+        <LineChart width={650} height={350} data={filteredScores} margin={{ top: 5, right: 30, bottom: 5, left:-30 }}>
                     <XAxis dataKey="date"
                         stroke='rgba(255,255,255,0.8)'
                         tickFormatter={(date) => new Date(date).toLocaleDateString()}/>

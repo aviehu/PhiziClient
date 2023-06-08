@@ -179,12 +179,12 @@ export default function AppPage() {
     const handleSuccessAnimationComplete = () => {
         setTimeout(() => {
           setOpenSuccessAnim(false);
-        }, 1900); // Adjust the delay as needed
+        }, 1600); // Adjust the delay as needed
       };
     const handleFinishAnimationComplete = () => {
         setTimeout(() => {
             setOpenFinishAnim(false);
-        }, 1900); // Adjust the delay as needed
+        }, 1600); // Adjust the delay as needed
     };
 
     return (

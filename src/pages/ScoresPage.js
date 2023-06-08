@@ -13,7 +13,7 @@ import UserContext from "../context/UserContext";
 import ProgressChart from '../components/ProgressChart';
 
 const CustomizedSelect = styled(Select)`
-background-color:  rgba(255,255,255,0.14);
+background-color:  rgba(255,255,255,0.4);
 border-color: black;
 
 color: black;
@@ -91,9 +91,9 @@ export default function ScoreTable() {
     return (
         <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%",justifySelf:'center' , alignItems:'center' }}>
           <Stack style={{ alignItems: "center",width:'100%'}} direction="column" spacing={3}>
-            <Stack style={{ width:'50%'}} direction="row" spacing={1}>
+            <Stack style={{width:'50%'}} direction="row" spacing={1}>
             {user && user.role !== 'client'?
-              <FormControl fullWidth>
+              <FormControl fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}>
                 <InputLabel id="demo-simple-select-label">User</InputLabel>
                 <CustomizedSelect
                     labelId="demo-simple-select-label"
@@ -113,7 +113,7 @@ export default function ScoreTable() {
               </FormControl>
             :null}
             
-            <FormControl fullWidth>
+            <FormControl fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}>
               <InputLabel id="demo-simple-select-label">Session</InputLabel>
               <CustomizedSelect
                   labelId="demo-simple-select-label"
@@ -130,7 +130,7 @@ export default function ScoreTable() {
                   ))}
               </CustomizedSelect>
             </FormControl>
-            <FormControl fullWidth>
+            <FormControl fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}>
               <InputLabel id="demo-simple-select-label">Year</InputLabel>
               <CustomizedSelect
                   labelId="demo-simple-select-label"
@@ -148,7 +148,7 @@ export default function ScoreTable() {
                   )}
               </CustomizedSelect>
             </FormControl>
-            <FormControl fullWidth>
+            <FormControl fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}>
               <InputLabel id="demo-simple-select-label">Month</InputLabel>
             <CustomizedSelect
                 labelId="demo-simple-select-label"
@@ -165,12 +165,12 @@ export default function ScoreTable() {
             </CustomizedSelect>
             </FormControl>
             </Stack>
-            <Stack>
+            <Stack display={'flex'} alignContent={'center'}>
             {filteredScores &&
               <ProgressChart filteredScores={filteredScores}/>
              }
-          </Stack>
             </Stack>
+        </Stack>
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import {
-    Button, Checkbox,
+    Button, Paper,
     Dialog,
     DialogActions,
     DialogContent,
@@ -56,19 +56,22 @@ export default function EditSession({editSession, setEditSession, loadSessions})
         <Dialog
             open={!!editSession}
             onClose={() => setEditSession(null)}
+            height
+            maxWidth="md"
         >
-            <DialogTitle>Edit Session {name}</DialogTitle>
+            <Stack  spacing={1.5} style={{alignItems:'center', padding:'3%',marginTop:'4%'}}>
+            <DialogTitle style={{  backgroundColor: "rgba(0,0,0,0.12)", borderRadius:6, width:'55%', textAlign:'center', color:'rgba(0,0,1,0.5)', boxShadow:'1px 2px 4px #999'}}>Edit Session {name}</DialogTitle>
             <DialogContent>
                 <Stack paddingTop={2} direction={'column'} spacing={2}>
                     <Stack direction={'row'} spacing={2}>
-                        <TextField disabled={true} value={name} onChange={(event) => setName(event.target.value)} label='Name'></TextField>
-                        <TextField type={'number'} value={difficulty} onChange={(event) => setDifficulty(event.target.value)} label='Difficulty'></TextField>
+                        <TextField disabled={true} value={name} onChange={(event) => setName(event.target.value)} label='Name' style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
+                        <TextField type={'number'} value={difficulty} onChange={(event) => setDifficulty(event.target.value)} label='Difficulty' style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
                     </Stack>
                     <Stack direction={'row'} spacing={2}>
-                        <TextField value={description} onChange={(event) => setDescription(event.target.value)} fullWidth={true} label='description'></TextField>
+                        <TextField value={description} onChange={(event) => setDescription(event.target.value)} fullWidth={true} label='description' style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
                     </Stack>
                     <Stack direction={'row'} spacing={2}>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}>
                             <InputLabel id="demo-simple-select-label">Goals</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -88,9 +91,10 @@ export default function EditSession({editSession, setEditSession, loadSessions})
                                     })
                                 }
                             </Select>
-                        </FormControl>                        </Stack>
+                        </FormControl>
+                    </Stack>
                     <Stack direction={'row'} spacing={2}>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}>
                             <InputLabel id="demo-simple-select-label">Poses</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -118,6 +122,8 @@ export default function EditSession({editSession, setEditSession, loadSessions})
                 <Button onClick={editSessionHandler}>Save</Button>
                 <Button onClick={() => setEditSession(null)}>Cancel</Button>
             </DialogActions>
+            </Stack>
+            
         </Dialog>
     )
 }

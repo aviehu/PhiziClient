@@ -56,7 +56,7 @@ export default function EditUserProfile() {
     }, [])
 
     return (
-        <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
+        <div style={{ display: "flex", position: "absolute", height: "80%", width: "100%", justifyContent: "center", alignItems: "center", marginTop:'4%' }}>
             <Snackbar
                 autoHideDuration={4000}
                 open={openSnackBar}
@@ -68,7 +68,7 @@ export default function EditUserProfile() {
                     Profile saved successfully
                 </Alert>
             </Snackbar>
-            <Paper variant='elevation' elevation={10} style={{borderRadius:'5%', backgroundColor:'rgba(255,255,255)', display: "flex", height: "59%", width: "47%", justifyContent: "center", alignItems: "center"}}>
+            <Paper variant='elevation' elevation={10} style={{borderRadius:'5%', backgroundColor:'rgba(255,255,255)', display: "flex", height: "80%", width: "47%", justifyContent: "center", alignItems: "center"}}>
                 <Stack direction="column" spacing={4}>
                     <Stack style={{alignItems:'center'}}>
                     <h1 style={{  backgroundColor: "rgba(0,0,0,0.12)", borderRadius:4, width:'40%',textAlign:'center', color:'rgba(0,0,1,0.5)', boxShadow:'1px 2px 4px #999'}}>Edit Profile</h1>

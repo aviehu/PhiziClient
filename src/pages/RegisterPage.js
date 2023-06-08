@@ -58,7 +58,7 @@ export default function RegisterPage() {
     }
 
     return (
-        <div style={{ display: "flex", position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
+        <div style={{ display: "flex", position: "absolute", height: "80%", width: "100%", justifyContent: "center", alignItems: "center",marginTop:'4%'}}>
             <Snackbar
                 autoHideDuration={4000}
                 open={openSnackBar}
@@ -70,22 +70,22 @@ export default function RegisterPage() {
                     User added successfully
                 </Alert>
             </Snackbar>
-            <Paper variant='elevation' elevation={10} style={{ borderRadius:'5%', display: "flex", height: "75%", width: "55%", backgroundColor:'rgba(255,255,255,0.95)', justifyContent: "center", alignItems: "center"}}>
-                <Stack style={{ textAlign: "center" }} direction="column" spacing={3}>
-                    <h1 style={{ paddingBottom: 4 }}>Register</h1>
+            <Paper variant='elevation' elevation={10} style={{ borderRadius:'5%', display: "flex", height: "80%", width: "50%", backgroundColor:'rgba(255,255,255,0.95)', justifyContent: "center", alignItems: "center"}}>
+                <Stack style={{ alignItems:'center'}} direction="column" spacing={3}>
+                    <h1 style={{  backgroundColor: "rgba(0,0,0,0.12)", borderRadius:4, width:'45%',textAlign:'center', color:'rgba(0,0,1,0.5)', boxShadow:'1px 2px 4px #999'}}>Register</h1>
                     <Stack direction={'row'} spacing={3}>
-                        <TextField key="Email" label="Email" value={email} onChange={(event) => setEmail(event.target.value)}></TextField>
-                        <TextField key="password" type={"password"} label="Password" value={password} onChange={(event) => setPassword(event.target.value)}></TextField>
+                        <TextField key="Email" label="Email" value={email} onChange={(event) => setEmail(event.target.value)} style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
+                        <TextField key="password" type={"password"} label="Password" value={password} onChange={(event) => setPassword(event.target.value)} style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
                     </Stack>
                     <Stack direction={'row'} spacing={3}>
-                        <TextField key="firstName" label="First Name" value={firstName} onChange={(event) => setFirstName(event.target.value)}></TextField>
-                        <TextField key="lastName" label="Last Name" value={lastName} onChange={(event) => setLastName(event.target.value)}></TextField>
+                        <TextField key="firstName" label="First Name" value={firstName} onChange={(event) => setFirstName(event.target.value)} style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
+                        <TextField key="lastName" label="Last Name" value={lastName} onChange={(event) => setLastName(event.target.value)} style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
                     </Stack>
-                    <Stack direction={'row'} spacing={3}>
-                    <TextField key="age" label="Age" value={age} onChange={(event) => setAge(event.target.value)}></TextField>
+                    <Stack direction={'row'} spacing={3} style={{width:'100%'}}>
+                    <TextField key="age" label="Age" value={age} onChange={(event) => setAge(event.target.value)} fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}></TextField>
                     {
                             user && (user.role === 'admin' || user.role === 'therapist') ?
-                                <FormControl fullWidth>
+                                <FormControl fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}>
                                     <InputLabel id="demo-simple-select-label">Role</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"

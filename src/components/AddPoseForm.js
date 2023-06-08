@@ -1,4 +1,8 @@
 import { useState, input, useEffect, useRef } from "react";
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import { styled } from '@mui/material/styles';
+
 import {
     Button,
     Paper,
@@ -11,8 +15,9 @@ import {
     MenuItem,
     Checkbox,
     ListItemText,
-    Typography,
-    Slider,
+    Tooltip,
+    Box,
+    IconButton,
     Snackbar, Slide, Alert
 } from "@mui/material";
 import api from "../util/api";
@@ -37,6 +42,7 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
     const [openSnackBar, setOpenSnackBar] = useState(false)
     const imageRef = useRef()
     const resizedImageRef = useRef()
+    const hiddenFileInput = useRef(null);
 
     const ITEM_HEIGHT = 48
     const ITEM_PADDING_TOP = 8
@@ -130,9 +136,13 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
     function TransitionRight(props) {
         return <Slide {...props} direction="right" />;
     }
+    
+    function handleAddPic(event){
+        hiddenFileInput.current.click();
+    }
 
     return (
-        <div style={{ display: 'flex', position: "absolute", height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
+        <div style={{ display: "flex", position: "absolute", height: "80%", width: "100%", justifyContent: "center", alignItems: "center",marginTop:'6%'}}>
             <Snackbar
                 autoHideDuration={4000}
                 open={openSnackBar}
@@ -145,11 +155,12 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
                     Pose added successfully
                 </Alert>
             </Snackbar>
-            <Paper variant='elevation' elevation={10} style={{ borderRadius:'5%', backgroundColor:'rgba(255,255,255,0.95)', padding: 100, display: 'flex', justifyContent: "center", alignItems: "center", height: "40%", width: "30%" }}>
-                <Stack direction="column" spacing={3} style={{ alignItems:'center',textAlign: "center" }}>
-                        <h1 style={{  backgroundColor: "rgba(0,0,0,0.12)", borderRadius:4, width:'60%',textAlign:'center', color:'rgba(0,0,1,0.5)', boxShadow:'1px 2px 4px #999'}}>Add Pose</h1>
-                        <TextField label="Name" value={name} onChange={(event) => setName(event.target.value)} fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%', width:'85%'}}></TextField>
-                        <FormControl sx={{ m: 1 }} fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%', width:'85%'}}>
+            <Paper variant='elevation' elevation={10} style={{ borderRadius:'5%', backgroundColor:'rgba(255,255,255,0.95)', display: 'flex', justifyContent: "center", alignItems: "center", height: "90%", width: "40%"}}>
+                <Stack direction="column" spacing={2} style={{ alignItems:'center',textAlign: "center", width:'100%' }}>
+                        <h1 style={{  backgroundColor: "rgba(0,0,0,0.12)", borderRadius:4, width:'45%',textAlign:'center', color:'rgba(0,0,1,0.5)', boxShadow:'1px 2px 4px #999'}}>Add Pose</h1>
+                        <Stack direction="column" spacing={3} style={{ alignItems:'center',textAlign: "center" }}>
+                        <TextField label="Name" value={name} onChange={(event) => setName(event.target.value)} fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}} ></TextField>
+                        <FormControl sx={{ m: 1 }} fullWidth style={{boxShadow:'1px 1px #999', borderRadius:'5%'}}>
                             <InputLabel id="demo-multiple-checkbox-label">Goals</InputLabel>
                             <Select
                                 labelId="demo-multiple-checkbox-label"
@@ -169,16 +180,30 @@ export default function AddPoseForm({ setGoals, setName, setKeypoints, name, goa
                                 ))}
                             </Select>
                         </FormControl>
-
-                        <input type="file" multiple accept="image/*" onChange={onImageChange} style={{marginLeft:70}} />
+                        </Stack>
+                        <Stack direction="row" spacing={3} style={{ alignItems:'center',textAlign: "center" }} >
+                        <Tooltip title="upload picture">
+                            <IconButton aria-label="upload picture" onClick={handleAddPic} size='large' style={{boxShadow: 'rgba(0, 0, 0, 0.24) 1px 3px 8px,rgba(0, 0, 0, 0.24) 1px 1px 2px', borderRadius:'30%'}} fullWidth>
+                                <FileUploadIcon />
+                            </IconButton>
+                        </Tooltip>
+                        
+                        <input ref={hiddenFileInput} type="file" multiple accept="image/*" onChange={onImageChange} style={{display:'none'}}  />
+                        
+                        <Tooltip title="take a picture">
+                            <IconButton aria-label="take picture" onClick={switchView} size='large' style={{boxShadow: 'rgba(0, 0, 0, 0.24) 1px 3px 8px,rgba(0, 0, 0, 0.24) 1px 1px 2px', borderRadius:'30%'}}>
+                                <AddAPhotoIcon />
+                            </IconButton>
+                        </Tooltip>
+                       
+                        </Stack>
                         {imageUrl ?
-                            <img hidden={false} src={imageUrl} style={{ width: 250 }}></img> : null
+                            <img hidden={false} src={imageUrl} style={{ width: 100 }}></img> : null
                         }
-                        <Button onClick={switchView}>Take a Picture</Button>
                     <Button disabled={!name || !goals} onClick={() => {
                         setOpenSnackBar(true)
                         submitForm()
-                    }}>Add</Button>
+                    }}>Save</Button>
                 </Stack>
             </Paper>
             {imageUrl ?
