@@ -7,10 +7,11 @@ import {
     MenuItem,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend,CartesianGrid} from 'recharts';
 import api from '../util/api';
 import UserContext from "../context/UserContext";
 import ProgressChart from '../components/ProgressChart';
+
 
 const CustomizedSelect = styled(Select)`
 background-color:  rgba(255,255,255,0.4);
@@ -20,6 +21,7 @@ color: black;
 `;
 
 export default function ScoreTable() {
+    const allGoals = ["Shoulders", "Legs", "Upper Body"]
     const { getUser } = useContext(UserContext)
     const user = getUser()
     const [scores, setScores] = useState(null);
@@ -30,6 +32,7 @@ export default function ScoreTable() {
     const [selectedMonth, setSelectedMonth] = useState('');
     const [selectedYear, setSelectedYear] = useState('');
     const [filteredScores,setFilteredScores] = useState([]);
+    const [goalsData, setGoalsData] = useState(null)
 
     useEffect(() => {
         async function load(){
@@ -57,9 +60,25 @@ export default function ScoreTable() {
           const userScores = await api.getUserScores(selectedUser)
           setScores(userScores)
           const sessionsSet = new Set()
-          userScores.map((score) => sessionsSet.add(score.session))
+          userScores.map((score) =>{
+            sessionsSet.add(score.session.name)
+            })
           setSessions([...sessionsSet])
-          console.log("sessions: ", [...sessionsSet])
+          const myGoalsData = allGoals.map((goal)=>{
+            const cur = userScores.reduce((acc,curSession)=>{
+                if(curSession.session.goals.includes(goal)){
+                    acc.count += 1
+                }
+                else{
+                    acc.count = 5
+                }
+                return acc
+            
+            },{subject: goal, count: 0})
+            console.log("cur", cur)
+            return cur
+          })
+          setGoalsData(myGoalsData)
         }
         handleSelectUserChange()
     }, [selectedUser]);
@@ -165,49 +184,25 @@ export default function ScoreTable() {
             </CustomizedSelect>
             </FormControl>
             </Stack>
-            <Stack display={'flex'} alignContent={'center'}>
+            <Stack direction='row' display={'flex'} alignContent={'center'}>
             {filteredScores &&
               <ProgressChart filteredScores={filteredScores}/>
+              
              }
+             {goalsData &&
+                    <RadarChart  cx="50%" cy="50%" outerRadius="80%" width={730} height={250} data={goalsData} >
+                    <PolarGrid width={650} height={350} stroke="#853b8c" fill='rgba(255,255,255,0.7)' />
+                    <CartesianGrid strokeDasharray="3 3" stroke='rgba(255,255,255,0.9)' fill='rgba(255,255,255,0.7)'/>
+                    <PolarAngleAxis dataKey="subject" stroke="#853b8c" />
+                    <PolarRadiusAxis angle={30} domain={[0, 20]} stroke="#853b8c"  />
+                    <Radar name={selectedUser} dataKey="count" stroke="#963e9e" fill="#CB67D4" fillOpacity={0.7} />
+                    <Legend />
+                </RadarChart>
+             
+             }
+             
             </Stack>
         </Stack>
         </div>
     );
 };
-{/* <Paper sx={{ width: '100%' }}>
-                <TableContainer component={Paper}>
-                    <Table stickyHeader aria-label="sticky table">
-                        <TableHead>
-                            <TableRow>
-                                {columns.map((column) => (
-                                    <TableCell
-                                        key={column.id}
-                                        align="center"
-                                    >
-                                        {column.label}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {scores && scores.map((score) => (
-                                <TableRow key={score._id}>
-                                    <TableCell align="center">{score.user}</TableCell>
-                                    <TableCell align="center">{score.session}</TableCell>
-                                    <TableCell align="center">{score.duration}</TableCell>
-                                    <TableCell align="center">{new Date(score.date).toLocaleDateString()}</TableCell>
-                                </TableRow>
-                            )).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                {scores && <TablePagination
-                    rowsPerPageOptions={[5, 10]}
-                    component="div"
-                    count={scores.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />}
-            </Paper> */}
