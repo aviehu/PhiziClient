@@ -24,8 +24,8 @@ export default function SessionPage() {
         load()
     }, [])
 
-    async function handleDelete(id) {
-        await api.deleteSession(id)
+    async function handleDelete(name) {
+        await api.deleteSession(name)
         await load()
     }
 

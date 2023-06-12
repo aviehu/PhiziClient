@@ -30,7 +30,7 @@ export function drawCircles(ctx, positions, matchingJoints) {
     positions.forEach((pos) => {
         ctx.beginPath();
         ctx.fillStyle =  matchingJoints && isMatching(pos) ? 'rgb(2,248,19)' : 'rgb(255,223,0)'
-        ctx.arc(pos.x, pos.y, 2, 0, 2 * Math.PI);
+        ctx.arc(pos.x, pos.y, matchingJoints && isMatching(pos) ? 4 : 2, 0, 2 * Math.PI);
         ctx.fill();
     })
 }

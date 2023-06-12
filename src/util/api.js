@@ -84,9 +84,9 @@ api.addSession = async function (body) {
     return await response.json()
 }
 
-api.deleteSession = async function (id) {
+api.deleteSession = async function (name) {
     const requestOptions = deleteRequestOptions()
-    const response = await fetch(`${serverUrl}/sessions/deleteSession/${id}`, requestOptions)
+    const response = await fetch(`${serverUrl}/sessions/deleteSession/${name}`, requestOptions)
     return await response.json()
 }
 
@@ -136,21 +136,21 @@ api.addPose = async function (body) {
     return await response.json()
 }
 
-api.deletePose = async function (id) {
+api.deletePose = async function (name) {
     const requestOptions = deleteRequestOptions()
-    const response = await fetch(`${serverUrl}/poses/deletePose/${id}`, requestOptions)
+    const response = await fetch(`${serverUrl}/poses/deletePose/${name}`, requestOptions)
     return await response.json()
 }
 
-api.getPose = async function (body) {
-    const requestOptions = postRequestOptions(body)
-    const response = await fetch(`${serverUrl}/poses/getPose`, requestOptions)
+api.getPose = async function (name) {
+    const requestOptions = postRequestOptions(name)
+    const response = await fetch(`${serverUrl}/poses/getPose/${name}`, requestOptions)
     return await response.json()
 }
 
 api.updatePose = async function (body) {
     const requestOptions = postRequestOptions(body)
-    const response = await fetch(`${serverUrl}/poses/updatePose`, requestOptions)
+    const response = await fetch(`${serverUrl}/poses/updatePose/${body.name}`, requestOptions)
     return await response.json()
 }
 

@@ -59,7 +59,7 @@ export default function SessionsTable({ sessions, handleDelete, setEditSession }
                                 </IconButton>
                             </StyledTableCell>
                             <StyledTableCell align="center">
-                                <IconButton aria-label="delete" onClick={() => {handleDelete(session._id) }}>
+                                <IconButton aria-label="delete" onClick={() => {handleDelete(session.name) }}>
                                     <DeleteIcon />
                                 </IconButton>
                             </StyledTableCell>

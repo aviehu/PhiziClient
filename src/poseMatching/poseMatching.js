@@ -2,6 +2,9 @@ import {calcAngles, findAngle} from '../util/calc'
 import get3DPositions from "../util/get3DPositions";
 
 export default function isMatching(wantedPoseAngles, userPose) {
+    if(!userPose || !userPose[0]) {
+        return []
+    }
     const userPose3D = get3DPositions(userPose[0])
     const userPoseAngles = calcAngles(userPose3D)
     const ans = []
@@ -9,7 +12,7 @@ export default function isMatching(wantedPoseAngles, userPose) {
         const wantedAngle = wantedPoseAngles[i]
         const userAngle = userPoseAngles[i]
         if ((wantedAngle !== -1 && userAngle === -1)
-        ||  Math.abs(wantedAngle.angle - userAngle.angle) > 15
+        ||  Math.abs(wantedAngle.angle - userAngle.angle) > 20
         ||  findAngle(wantedAngle.normal, [0,0,0], userAngle.normal) > 20) {
             break
         }

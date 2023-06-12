@@ -29,6 +29,9 @@ export default function AddSession({openAddSession, setOpenAddSession, loadSessi
     useEffect(() => {
         async function load() {
             const poses = await api.getPosesByGoals({ goals })
+            if(poses.error) {
+                return
+            }
             setPoses(poses)
         }
         load()
