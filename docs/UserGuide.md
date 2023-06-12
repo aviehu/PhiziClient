@@ -14,7 +14,7 @@
      - [Add Pose](#add-pose)
      - [Sessions](#sessions)
      - [Patients Progress](#patients-progress)
-5.  [Q/A](#qa)
+5.  [FAQ](#faq)
 
 
 ## Introduction
@@ -174,8 +174,19 @@ Here you first need to select a user that you wish to view his progress and afte
 * Month <br/>
 of each user.
   
-### Q/A
+### FAQ
 
 #### Q: I tried to log in and nothing happened.
 #### A: We at Phizzi use a 'Server less' server so sometimes when a request haven't been made in a while it can take a few moments for the server to respond
 
+#### Q: The skeleton is not showing on top of my video.
+#### A: Sometimes the Blaze Pose network encounters an error that we can't handle, please refresh your browser and the issue will be fixed
+
+#### Q: I forgot my password.
+#### A: Contact your therapist and ask him for your password.
+
+#### Q: I am a therapist and don't want to upload an image of myself for privacy reasons.
+#### A: We don't store the image itself, only the landmarks of the skeleton. your privacy is safe.
+
+#### Q: A session that I was playing with is now not displaying.
+#### A: Either your therapist changed your goals or changed the session goals, please contact your therapist to resolve this issue
