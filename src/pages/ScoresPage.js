@@ -61,12 +61,14 @@ export default function ScoreTable() {
           setScores(userScores)
           const sessionsSet = new Set()
           userScores.map((score) =>{
-            sessionsSet.add(score.session.name)
+              if(score.session && score.session.name) {
+                  sessionsSet.add(score.session.name)
+              }
             })
           setSessions([...sessionsSet])
           const myGoalsData = allGoals.map((goal)=>{
             const cur = userScores.reduce((acc,curSession)=>{
-                if(curSession.session.goals.includes(goal)){
+                if(curSession.session && curSession.goals && curSession.session.goals.includes(goal)){
                     acc.count += 1
                 }
                 else{
@@ -90,7 +92,7 @@ export default function ScoreTable() {
           const scoreDate = new Date(score.date);
           if (selectedMonth && scoreDate.getMonth() !== parseInt(selectedMonth)) return false;
           if (selectedYear && scoreDate.getFullYear() !== parseInt(selectedYear)) return false;
-          if(selectedSession && score.session !== selectedSession) return false
+          if(selectedSession && score.session && score.session.name !== selectedSession) return false
           return true;
           }).sort((first, second) =>
                new Date(first.date).getTime() - new Date(second.date).getTime()
@@ -190,8 +192,8 @@ export default function ScoreTable() {
               
              }
              {goalsData &&
-                    <RadarChart  cx="50%" cy="50%" outerRadius="80%" width={730} height={250} data={goalsData} >
-                    <PolarGrid width={650} height={350} stroke="#853b8c" fill='rgba(255,255,255,0.7)' />
+                <RadarChart  width={180} height={150} data={goalsData} >
+                    <PolarGrid stroke="#853b8c" fill='rgba(255,255,255,0.7)' />
                     <CartesianGrid strokeDasharray="3 3" stroke='rgba(255,255,255,0.9)' fill='rgba(255,255,255,0.7)'/>
                     <PolarAngleAxis dataKey="subject" stroke="#853b8c" />
                     <PolarRadiusAxis angle={30} domain={[0, 20]} stroke="#853b8c"  />
