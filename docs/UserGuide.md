@@ -57,7 +57,7 @@ and send him to the welcoming page.
 access.
 
 ### Login
-<img src="img.png" alt="log in page" width="600" height="300"/>
+<img src="images/img.png" alt="log in page" width="600" height="300"/>
 <br/><br/>
 A page to log in to our system with, enter your email in the email box and password in the password box and click
 the login button to log in, if successful it will log you in and send you to the welcoming page. 
@@ -73,14 +73,14 @@ of all available sessions for you (the sessions are assigned to you based on you
 Once you choose a session your progress in that will be displayed above the video and the first pose for that session
 will be displayed in the top left of the video like so: <br/><br/>
 
-<img src="Target Pose.png" alt="App page" width="600" height="300"> <br/><br/>
+<img src="images/Target Pose.png" alt="App page" width="600" height="300"> <br/><br/>
 
 Once you are read to start the session press the "start game" button, after that a skeleton will be display on top of your
 video and the time will start running.
 Your Goal is to match the Target position for 2 seconds in order to move on to the next pose, once all the poses in the session are
 done you successfully finished the session. <br/><br/>
 
-<img src="Matching Joint (1).png" alt="Pose matching" width="600" height="300"> <br/><br/>
+<img src="images/Matching Joint (1).png" alt="Pose matching" width="600" height="300"> <br/><br/>
 
 Each matching joint will appear in green and to match the whole pose you have to match every joint with the target pose.
 The joints are matched by looking at the angle at the joint and the orientation of that angle so only a good and correct match will
@@ -90,7 +90,7 @@ After the session is over you will be returned to the welcome menu, and you scor
 ### Progress
 To see your progress as a Patient in the menu click "Progress" and it will send you to the progress page:<br/><br/>
 
-<img src="img_2.png" alt="Pose matching" width="600" height="300"> <br/><br/>
+<img src="images/img_2.png" alt="Pose matching" width="600" height="300"> <br/><br/>
 
 The page displays your progress so far. In the center will appear a chart with all of your past sessions, the x-axis is 
 the dates and the y-axis is the score. Above the chart you have 3 options to filter by:
@@ -100,7 +100,7 @@ the dates and the y-axis is the score. Above the chart you have 3 options to fil
 
 you can use these filters to get a more precise graph of your progress like so: <br/><br/>
 
-<img src="img_4.png" alt="Pose matching" width="600" height="300"> <br/><br/>
+<img src="images/img_4.png" alt="Pose matching" width="600" height="300"> <br/><br/>
 
 ## Therapist Actions
 
@@ -109,7 +109,7 @@ Actions available to a logged in Therapist
 ### Register
 To Register a new patient open the menu and press "Register" and it will send you to the register page.<br/><br/>
 
-<img src="img_5.png" alt="Pose matching" width="600" height="300"> <br/><br/>
+<img src="images/img_5.png" alt="Pose matching" width="600" height="300"> <br/><br/>
 
 enter the patient's info into the text boxes and press register to accept or back to cancel. Write down the password
 you chose so that you can give it to the patient.<br/>
@@ -118,7 +118,7 @@ Once the user is registered you can edit his info and set his goal int the Users
 ### View Users
 To view the patients registered by you open the menu and press "Users" and it will send you to the users page.<br/><br/>
 
-<img src="img_6.png" alt="Pose matching" width="600" height="300"> <br/><br/>
+<img src="images/img_6.png" alt="Pose matching" width="600" height="300"> <br/><br/>
 
 In this page a table will be displayed and in it all the users registered by you.
 you can preform the following actions for each user here:<br/>
@@ -129,7 +129,7 @@ you can preform the following actions for each user here:<br/>
 ### Add Pose
 To add a Pose to the database open the menu and press "Add Pose" and it will send you to the Add Pose Page:<br/><br/>
 
-<img src="Upload Picture.png" alt="Pose matching" width="600" height="300"> <br/><br/>
+<img src="images/Upload Picture.png" alt="Pose matching" width="600" height="300"> <br/><br/>
 
 Fill in the pose name and select its goals. After that there are 2 options:
 1. Upload a picture - you browse the files on your machine and upload a picture that will then be processed by the
@@ -138,7 +138,7 @@ pose matching model.
 the skeleton will appear on top of your body and the take a picture button will be enabled.
 press the take a picture to start a timer of 5 seconds to get into position of the target pose. <br/><br/>
 
-<img src="Five.png" alt="Pose matching" width="600" height="300"> <br/><br/>
+<img src="images/Five.png" alt="Pose matching" width="600" height="300"> <br/><br/>
 
 when the countdown is done the skeleton will change color, and you can choose to accept it or press the "draw skeleton" 
 button to try again. <br/><br/>
@@ -147,13 +147,13 @@ button to try again. <br/><br/>
 ### Sessions
 To Add a new Session or edit an existing one open the menu and press "Sessions" and it will send you to the Sessions page: <br/><br/>
 
-<img src="img_7.png" alt="Pose matching" width="600" height="300"> <br/><br/>
+<img src="images/img_7.png" alt="Pose matching" width="600" height="300"> <br/><br/>
 
 Here you can do 3 things:
 
 1. Add a new Session: By clicking the "+" Icon on the top right of the table <br/><br/>
 
-<img src="img_8.png" alt="Pose matching" width="600" height="300"> <br/><br/>
+<img src="images/img_8.png" alt="Pose matching" width="600" height="300"> <br/><br/>
 
 Here you chose a name for the session, the difficulty (between 1-10), the goals (select from a list of goals) and the 
 poses in the session (multi select from a list of poses matching the goals set by you). the poses will appear by
@@ -166,7 +166,7 @@ it will open a page similar to the add Session page where you can edit the sessi
 ### Patients Progress
 To view the progress of your patients open the menu and press "Progress" and it will send you to the progress page: <br/><br/>
 
-<img src="img_9.png" alt="Pose matching" width="600" height="300"> <br/><br/>
+<img src="images/img_9.png" alt="Pose matching" width="600" height="300"> <br/><br/>
 
 Here you first need to select a user that you wish to view his progress and after that you can filter the:
 * session
