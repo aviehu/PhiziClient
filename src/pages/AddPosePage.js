@@ -2,16 +2,23 @@ import {useState} from "react";
 import PoseFromWebcam from "../components/PoseFromWebcam";
 import AddPoseForm from "../components/AddPoseForm";
 import api from "../util/api";
+import { useNavigate } from "react-router-dom";
 
 export default function AddPosePage() {
     const [poseFromWebcam, setPoseFromWebcam] = useState(false)
     const [goals, setGoals] = useState([]);
     const [name, setName] = useState("");
     const [keypoints, setKeypoints] = useState([])
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+    const navigate = useNavigate()
 
     async function submitForm() {
         if(keypoints !== []) {
-            await api.addPose({name, goals, keypoints: keypoints.keypoints, keypoints3D: keypoints.keypoints3D})
+            const response = await api.addPose({name, goals, keypoints: keypoints.keypoints, keypoints3D: keypoints.keypoints3D})
+            if(!response.error){
+                await delay(1500);
+                navigate('/')
+            }
         }
     }
 
