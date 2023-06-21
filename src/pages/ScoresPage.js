@@ -68,16 +68,15 @@ export default function ScoreTable() {
           setSessions([...sessionsSet])
           const myGoalsData = allGoals.map((goal)=>{
             const cur = userScores.reduce((acc,curSession)=>{
-                if(curSession.session && curSession.goals && curSession.session.goals.includes(goal)){
+                console.log("curSess",curSession)
+                console.log("goal", goal)
+                if(curSession.session && curSession.session.goals && curSession.session.goals.includes(goal)){
                     acc.count += 1
                 }
-                else{
-                    acc.count = 5
-                }
-                return acc
+                return {subject: goal, count: acc.count}
             
             },{subject: goal, count: 0})
-            console.log("cur", cur)
+
             return cur
           })
           setGoalsData(myGoalsData)
