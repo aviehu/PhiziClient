@@ -76,8 +76,9 @@ export default function PhiziAppBar({children}) {
                  </Typography>}
                         
                     
-                  
-                 <InboxBadge/>
+                  {user? <InboxBadge/>
+                  :null}
+                 
                   {getUser()?
                    <Button onClick={handleLogout} color="inherit"><LogoutIcon/></Button>
                    
