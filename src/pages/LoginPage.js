@@ -3,6 +3,7 @@ import { Button, Paper, Stack, TextField } from "@mui/material";
 import api from "../util/api";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../context/UserContext";
+import MessagesContext from '../context/MessagesContext';
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
@@ -10,11 +11,16 @@ export default function LoginPage() {
     const { getUser, setUser } = useContext(UserContext)
     const navigate = useNavigate()
     const user = getUser()
+    const {messages, setMessages} = useContext(MessagesContext)
 
     async function handleLogin() {
         const response = await api.login({ email, password })
         if (!response.error) {
             setUser(response)
+            const loadMess = await api.getUserMessages({user: response.name})
+            const unread = loadMess.filter((mess) => !mess.read)
+            const unreadCounts = unread.length
+            setMessages(unreadCounts)
             navigate('/')
             return
         }

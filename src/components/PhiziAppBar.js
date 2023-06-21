@@ -7,19 +7,33 @@ import { Fragment } from 'react';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import {useContext, useState} from "react";
+import {useContext, useState, useEffect} from "react";
 import SideBar from "./SideBar";
 import {useNavigate} from "react-router-dom";
 import UserContext from "../context/UserContext";
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import Divider from '@mui/material/Divider';
+import InboxBadge from './InboxBadge';
+import MessagesContext from '../context/MessagesContext';
+import api from '../util/api';
 
 export default function PhiziAppBar({children}) {
   const { getUser,setUser } = useContext(UserContext)
+  const {messages, setMessages} = useContext(MessagesContext)
   const [openSideBar, setOpenSideBar] = useState(false)
   const navigate = useNavigate()
   const user = getUser()
+
+  useEffect(()=>{
+    async function load(){
+      const loadMess = await api.getUserMessages({user: user.name})
+    const unread = loadMess.filter((mess) => !mess.read)
+    const unreadCounts = unread.length
+    setMessages(unreadCounts)
+    }
+    load()
+  },[])
 
   function handleLogout() {
     setOpenSideBar(false)
@@ -63,8 +77,10 @@ export default function PhiziAppBar({children}) {
                         
                     
                   
-                  
-                  {getUser()? <Button onClick={handleLogout} color="inherit"><LogoutIcon/></Button>
+                 <InboxBadge/>
+                  {getUser()?
+                   <Button onClick={handleLogout} color="inherit"><LogoutIcon/></Button>
+                   
                   : <Button onClick={handleLogin} color="inherit">Login</Button>}
                 </Toolbar>
             </AppBar>

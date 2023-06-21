@@ -186,4 +186,24 @@ api.getAllScores = async function (session) {
     return await response.json()
 }
 
+// Messages API
+api.addMessage = async function (body) {
+    const requestOptions = postRequestOptions(body)
+    const response = await fetch(`${serverUrl}/messages/addMessage`, requestOptions)
+    return await response.json()
+}
+
+api.getUserMessages = async function (user) {
+    const requestOptions = postRequestOptions(user)
+    const response = await fetch(`${serverUrl}/messages/getUserMessages`, requestOptions)
+    return await response.json()
+}
+
+api.markedAsRead = async function (body) {
+    const requestOptions = postRequestOptions(body)
+    const response = await fetch(`${serverUrl}/messages/markedAsRead`, requestOptions)
+    return await response.json()
+}
+
+
 export default api
